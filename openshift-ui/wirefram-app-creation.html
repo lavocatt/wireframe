@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create BrokerApp - OpenShift Console</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pf-blue': '#0066cc',
+                        'pf-blue-hover': '#004080',
+                        'pf-gray': '#f0f0f0',
+                        'pf-border': '#d2d2d2',
+                        'os-dark': '#1f1f1f',
+                        'os-header': '#292929',
+                        'os-sidebar': '#212427',
+                        'os-nav-hover': '#3c3f42',
+                        'os-warning': '#a30000',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body class="bg-pf-gray font-sans h-screen overflow-hidden">
+    <!-- Warning Banner -->
+    <div class="bg-os-warning text-white text-center py-1 text-xs">
+        OpenShift Local cluster is for development and testing purposes. DON'T use it for production.
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-os-header text-white h-12 flex items-center px-4 shadow-md">
+        <div class="flex items-center space-x-4">
+            <!-- Menu Icon -->
+            <button class="text-white hover:text-gray-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <!-- okd Logo -->
+            <div class="flex items-center space-x-2">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21.665 12.713l-2.43-4.313a3.357 3.357 0 0 0-.124-.198c-.03-.044-.063-.086-.096-.128l-.013-.016a3.605 3.605 0 0 0-.844-.777 3.557 3.557 0 0 0-1.935-.567H8.999L6.57 2.401A3.57 3.57 0 0 0 3.428.287a3.584 3.584 0 0 0-2.143 2.113L.003 6.713v.573l1.282 4.313c.36 1.21 1.29 2.164 2.43 2.573l7.224 4.313a3.585 3.585 0 0 0 3.499 0l7.224-4.313c1.14-.409 2.07-1.363 2.43-2.573l.573-1.886zm-12.667.574v6.86l-5.43-3.144a2.288 2.288 0 0 1-1.283-2.057V8.403l6.713 4.884zm1.142-.859L3.428 7.544l2.43-4.313L12.57 6.86l-2.43 5.568zm7.287 3.715l-5.43 3.144v-6.86l6.713-4.884v6.543c0 .857-.48 1.642-1.283 2.057z"/>
+                </svg>
+                <span class="font-bold text-xl">okd</span>
+            </div>
+        </div>
+        <div class="ml-auto flex items-center space-x-3">
+            <button class="text-gray-300 hover:text-white relative">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                <span class="absolute -top-1 -right-1 bg-pf-blue text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">1</span>
+            </button>
+            <button class="text-gray-300 hover:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+            </button>
+            <button class="text-gray-300 hover:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </button>
+            <button class="text-white hover:text-gray-300 flex items-center space-x-1">
+                <span class="text-sm">developer</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Project Selector Bar -->
+    <div class="bg-white border-b border-gray-200 px-4 py-2">
+        <div class="flex items-center">
+            <label class="text-sm font-medium text-gray-700 mr-2">Project:</label>
+            <div class="relative">
+                <button class="flex items-center space-x-2 px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pf-blue">
+                    <span class="text-sm">my-application</span>
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex h-[calc(100vh-8rem)]">
+        <!-- Left Sidebar Navigation -->
+        <aside class="bg-os-sidebar text-gray-300 w-56 overflow-y-auto">
+            <nav class="py-2">
+                <!-- Perspective Selector -->
+                <div class="px-3 mb-2">
+                    <button class="w-full flex items-center justify-between px-3 py-2 text-sm text-white hover:bg-os-nav-hover rounded">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                            </svg>
+                            <span>Developer</span>
+                        </div>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Navigation Items -->
+                <div class="space-y-0">
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Home</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Operators</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+
+                    <!-- Workloads (Expanded) -->
+                    <div>
+                        <button class="w-full flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                            <span>Workloads</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="bg-os-dark">
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Pods</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Deployments</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">DeploymentConfigs</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">StatefulSets</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Brokers</a>
+                            <a href="#" class="block px-8 py-2 text-sm bg-gray-700 border-l-2 border-white text-white">BrokerApps</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Secrets</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">ConfigMaps</a>
+                        </div>
+                    </div>
+
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Networking</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Builds</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Pipelines</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto bg-white">
+            <div class="max-w-4xl mx-auto p-6">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <h1 class="text-2xl font-normal text-gray-900 mb-2">Create BrokerApp</h1>
+                    <p class="text-sm text-gray-600">
+                        Define your application's messaging requirements without configuring infrastructure. Specify your role and the addresses you need to produce to, consume from, or subscribe to. The operator will match your app to an available BrokerService.
+                    </p>
+                </div>
+
+                <!-- Form -->
+                <form class="space-y-8">
+                    <!-- Section 1: Application Details -->
+                    <div class="bg-white border-t border-gray-200 pt-6">
+                        <h2 class="text-lg font-medium text-gray-900 mb-6">Application Details</h2>
+                        <div class="space-y-5">
+                            <!-- Name -->
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-900 mb-2">
+                                    Name <span class="text-red-600">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                    placeholder="my-messaging-app"
+                                />
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Unique name for the BrokerApp resource.
+                                </p>
+                            </div>
+
+                            <!-- Namespace -->
+                            <div>
+                                <label for="namespace" class="block text-sm font-medium text-gray-900 mb-2">
+                                    Namespace <span class="text-red-600">*</span>
+                                </label>
+                                <select
+                                    id="namespace"
+                                    name="namespace"
+                                    required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                >
+                                    <option value="">Select a namespace</option>
+                                    <option value="default">default</option>
+                                    <option value="my-application">my-application</option>
+                                    <option value="dev">dev</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Namespace where your application is deployed.
+                                </p>
+                            </div>
+
+                            <!-- Role -->
+                            <div>
+                                <label for="role" class="block text-sm font-medium text-gray-900 mb-2">
+                                    Role <span class="text-red-600">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="role"
+                                    name="role"
+                                    required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                    placeholder="my-app-service-account"
+                                />
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Name of the role or service account that will be authorized to use these messaging capabilities.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Messaging Capabilities -->
+                    <div class="bg-white border-t border-gray-200 pt-6">
+                        <h2 class="text-lg font-medium text-gray-900 mb-6">Messaging Capabilities</h2>
+                        <p class="text-sm text-gray-600 mb-6">
+                            Specify the addresses your application needs to interact with. Leave empty if not applicable.
+                        </p>
+
+                        <div class="space-y-6">
+                            <!-- Produces To -->
+                            <div class="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50">
+                                <h3 class="text-base font-semibold text-gray-900 mb-3 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                    </svg>
+                                    Produces To
+                                </h3>
+                                <p class="text-xs text-gray-600 mb-3">
+                                    Addresses where your application will send messages.
+                                </p>
+
+                                <!-- Add Input -->
+                                <div class="flex gap-2 mb-3">
+                                    <input
+                                        type="text"
+                                        id="produces-input"
+                                        placeholder="e.g., orders.created"
+                                        class="flex-1 px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue text-sm"
+                                    />
+                                    <button
+                                        type="button"
+                                        class="px-4 py-2 bg-pf-blue text-white text-sm font-medium rounded shadow hover:bg-pf-blue-hover focus:outline-none focus:ring-2 focus:ring-pf-blue"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+
+                                <!-- List of Added Addresses -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between bg-white px-3 py-2 rounded border border-gray-200">
+                                        <span class="text-sm text-gray-900 font-mono">orders.created</span>
+                                        <button type="button" class="text-red-600 hover:text-red-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between bg-white px-3 py-2 rounded border border-gray-200">
+                                        <span class="text-sm text-gray-900 font-mono">orders.updated</span>
+                                        <button type="button" class="text-red-600 hover:text-red-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Consumes From -->
+                            <div class="border-l-4 border-green-500 pl-4 py-2 bg-green-50">
+                                <h3 class="text-base font-semibold text-gray-900 mb-3 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    Consumes From
+                                </h3>
+                                <p class="text-xs text-gray-600 mb-3">
+                                    Queue addresses your application will consume messages from (point-to-point).
+                                </p>
+
+                                <!-- Add Input -->
+                                <div class="flex gap-2 mb-3">
+                                    <input
+                                        type="text"
+                                        id="consumes-input"
+                                        placeholder="e.g., payments.pending"
+                                        class="flex-1 px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue text-sm"
+                                    />
+                                    <button
+                                        type="button"
+                                        class="px-4 py-2 bg-pf-blue text-white text-sm font-medium rounded shadow hover:bg-pf-blue-hover focus:outline-none focus:ring-2 focus:ring-pf-blue"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+
+                                <!-- List of Added Addresses -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between bg-white px-3 py-2 rounded border border-gray-200">
+                                        <span class="text-sm text-gray-900 font-mono">payments.pending</span>
+                                        <button type="button" class="text-red-600 hover:text-red-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Subscribes To -->
+                            <div class="border-l-4 border-purple-500 pl-4 py-2 bg-purple-50">
+                                <h3 class="text-base font-semibold text-gray-900 mb-3 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                    </svg>
+                                    Subscribes To
+                                </h3>
+                                <p class="text-xs text-gray-600 mb-3">
+                                    Topic addresses your application will subscribe to (publish-subscribe).
+                                </p>
+
+                                <!-- Add Input -->
+                                <div class="flex gap-2 mb-3">
+                                    <input
+                                        type="text"
+                                        id="subscribes-input"
+                                        placeholder="e.g., notifications.global"
+                                        class="flex-1 px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue text-sm"
+                                    />
+                                    <button
+                                        type="button"
+                                        class="px-4 py-2 bg-pf-blue text-white text-sm font-medium rounded shadow hover:bg-pf-blue-hover focus:outline-none focus:ring-2 focus:ring-pf-blue"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+
+                                <!-- List of Added Addresses -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between bg-white px-3 py-2 rounded border border-gray-200">
+                                        <span class="text-sm text-gray-900 font-mono">notifications.global</span>
+                                        <button type="button" class="text-red-600 hover:text-red-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between bg-white px-3 py-2 rounded border border-gray-200">
+                                        <span class="text-sm text-gray-900 font-mono">events.system</span>
+                                        <button type="button" class="text-red-600 hover:text-red-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between bg-white px-3 py-2 rounded border border-gray-200">
+                                        <span class="text-sm text-gray-900 font-mono">alerts.critical</span>
+                                        <button type="button" class="text-red-600 hover:text-red-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="flex justify-start gap-3 pt-6 pb-8 border-t border-gray-200 mt-8">
+                        <button
+                            type="submit"
+                            class="px-4 py-1.5 bg-pf-blue text-white text-sm font-normal rounded hover:bg-pf-blue-hover focus:outline-none transition"
+                        >
+                            Create
+                        </button>
+                        <button
+                            type="button"
+                            class="px-4 py-1.5 bg-white text-gray-700 text-sm font-normal border border-gray-300 rounded hover:bg-gray-50 focus:outline-none transition"
+                            onclick="window.history.back()"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

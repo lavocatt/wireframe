@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrokerApp my-payment-app - Resources - OpenShift Console</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pf-blue': '#0066cc',
+                        'pf-blue-hover': '#004080',
+                        'pf-gray': '#f0f0f0',
+                        'pf-border': '#d2d2d2',
+                        'os-dark': '#1f1f1f',
+                        'os-header': '#292929',
+                        'os-sidebar': '#212427',
+                        'os-nav-hover': '#3c3f42',
+                        'os-warning': '#a30000',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body class="bg-pf-gray font-sans h-screen overflow-hidden">
+    <!-- Warning Banner -->
+    <div class="bg-os-warning text-white text-center py-1 text-xs">
+        OpenShift Local cluster is for development and testing purposes. DON'T use it for production.
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-os-header text-white h-12 flex items-center px-4 shadow-md">
+        <div class="flex items-center space-x-4">
+            <button class="text-white hover:text-gray-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <div class="flex items-center space-x-2">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21.665 12.713l-2.43-4.313a3.357 3.357 0 0 0-.124-.198c-.03-.044-.063-.086-.096-.128l-.013-.016a3.605 3.605 0 0 0-.844-.777 3.557 3.557 0 0 0-1.935-.567H8.999L6.57 2.401A3.57 3.57 0 0 0 3.428.287a3.584 3.584 0 0 0-2.143 2.113L.003 6.713v.573l1.282 4.313c.36 1.21 1.29 2.164 2.43 2.573l7.224 4.313a3.585 3.585 0 0 0 3.499 0l7.224-4.313c1.14-.409 2.07-1.363 2.43-2.573l.573-1.886zm-12.667.574v6.86l-5.43-3.144a2.288 2.288 0 0 1-1.283-2.057V8.403l6.713 4.884zm1.142-.859L3.428 7.544l2.43-4.313L12.57 6.86l-2.43 5.568zm7.287 3.715l-5.43 3.144v-6.86l6.713-4.884v6.543c0 .857-.48 1.642-1.283 2.057z"/>
+                </svg>
+                <span class="font-bold text-xl">okd</span>
+            </div>
+        </div>
+        <div class="ml-auto flex items-center space-x-3">
+            <button class="text-gray-300 hover:text-white relative">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                <span class="absolute -top-1 -right-1 bg-pf-blue text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">1</span>
+            </button>
+            <button class="text-gray-300 hover:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+            </button>
+            <button class="text-gray-300 hover:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </button>
+            <button class="text-white hover:text-gray-300 flex items-center space-x-1">
+                <span class="text-sm">developer</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Project Selector Bar -->
+    <div class="bg-white border-b border-gray-200 px-4 py-2">
+        <div class="flex items-center">
+            <label class="text-sm font-medium text-gray-700 mr-2">Project:</label>
+            <div class="relative">
+                <button class="flex items-center space-x-2 px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pf-blue">
+                    <span class="text-sm">my-application</span>
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex h-[calc(100vh-8rem)]">
+        <!-- Left Sidebar Navigation -->
+        <aside class="bg-os-sidebar text-gray-300 w-56 overflow-y-auto">
+            <nav class="py-2">
+                <div class="px-3 mb-2">
+                    <button class="w-full flex items-center justify-between px-3 py-2 text-sm text-white hover:bg-os-nav-hover rounded">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                            </svg>
+                            <span>Developer</span>
+                        </div>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="space-y-0">
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Home</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Operators</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <div>
+                        <button class="w-full flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                            <span>Workloads</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="bg-os-dark">
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Pods</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Deployments</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Brokers</a>
+                            <a href="#" class="block px-8 py-2 text-sm bg-gray-700 border-l-2 border-white text-white">BrokerApps</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Secrets</a>
+                        </div>
+                    </div>
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Networking</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto bg-white">
+            <div class="max-w-full mx-auto p-6">
+                <!-- Breadcrumb -->
+                <nav class="mb-3 text-sm">
+                    <ol class="flex items-center space-x-2 text-gray-600">
+                        <li><a href="#" class="text-pf-blue hover:underline">BrokerApps</a></li>
+                        <li>&gt;</li>
+                        <li class="text-gray-900">my-payment-app</li>
+                    </ol>
+                </nav>
+
+                <!-- Page Header with Status Badge -->
+                <div class="mb-2">
+                    <div class="flex items-center space-x-3 mb-1">
+                        <h1 class="text-2xl font-normal text-gray-900">my-payment-app</h1>
+                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded border border-green-300">Bound</span>
+                    </div>
+                    <p class="text-sm text-gray-600">
+                        Bound to Service: <a href="#" class="text-pf-blue hover:underline">ex-aao</a>
+                    </p>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="flex space-x-8">
+                        <a href="#" class="border-b-2 border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300 pb-3 text-sm font-medium">Overview</a>
+                        <a href="#" class="border-b-2 border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300 pb-3 text-sm font-medium">YAML</a>
+                        <a href="#" class="border-b-2 border-pf-blue text-pf-blue pb-3 text-sm font-medium">Resources</a>
+                    </nav>
+                </div>
+
+                <!-- Filter/Search Bar -->
+                <div class="flex items-center gap-2 mb-4">
+                    <button class="flex items-center px-3 py-1.5 border border-gray-300 rounded text-sm hover:bg-gray-50">
+                        <span class="mr-1 font-medium">Name</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div class="flex-1">
+                        <input
+                            type="text"
+                            placeholder="Search by name..."
+                            class="w-full px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-pf-blue focus:border-pf-blue"
+                        />
+                    </div>
+                    <span class="text-sm text-gray-500">/</span>
+                </div>
+
+                <!-- Resources Table -->
+                <div class="border border-gray-200 rounded overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600">Kind</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                            <!-- Client Certificate Secret -->
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <circle cx="10" cy="10" r="8"/>
+                                        </svg>
+                                        <a href="#" class="text-pf-blue hover:underline">my-payment-app-client-cert</a>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">Secret</td>
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <span class="inline-flex items-center text-sm text-green-700">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Created
+                                    </span>
+                                </td>
+                                <td class="px-6 py-3 text-sm text-gray-600">
+                                    TLS client certificate for broker authentication
+                                </td>
+                            </tr>
+
+                            <!-- Client Certificate CertificateRequest -->
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <circle cx="10" cy="10" r="8"/>
+                                        </svg>
+                                        <a href="#" class="text-pf-blue hover:underline">my-payment-app-client-cert-def45</a>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">CertificateRequest</td>
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <span class="inline-flex items-center text-sm text-green-700">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Approved
+                                    </span>
+                                </td>
+                                <td class="px-6 py-3 text-sm text-gray-600">
+                                    cert-manager request for client certificate
+                                </td>
+                            </tr>
+
+                            <!-- Prometheus Client Certificate Secret -->
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <circle cx="10" cy="10" r="8"/>
+                                        </svg>
+                                        <a href="#" class="text-pf-blue hover:underline">my-payment-app-prometheus-client-cert</a>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">Secret</td>
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <span class="inline-flex items-center text-sm text-green-700">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Created
+                                    </span>
+                                </td>
+                                <td class="px-6 py-3 text-sm text-gray-600">
+                                    TLS client certificate for Prometheus metrics endpoint
+                                </td>
+                            </tr>
+
+                            <!-- Prometheus Client Certificate CertificateRequest -->
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <circle cx="10" cy="10" r="8"/>
+                                        </svg>
+                                        <a href="#" class="text-pf-blue hover:underline">my-payment-app-prometheus-client-cert-ghi89</a>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">CertificateRequest</td>
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <span class="inline-flex items-center text-sm text-green-700">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Approved
+                                    </span>
+                                </td>
+                                <td class="px-6 py-3 text-sm text-gray-600">
+                                    cert-manager request for Prometheus certificate
+                                </td>
+                            </tr>
+
+                            <!-- Data Plane CA ConfigMap -->
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <circle cx="10" cy="10" r="8"/>
+                                        </svg>
+                                        <a href="#" class="text-pf-blue hover:underline">data-plane-ca</a>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">ConfigMap</td>
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <span class="inline-flex items-center text-sm text-green-700">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Created
+                                    </span>
+                                </td>
+                                <td class="px-6 py-3 text-sm text-gray-600">
+                                    Data plane CA certificate for TLS trust
+                                </td>
+                            </tr>
+
+                            <!-- PEMCFG ConfigMap -->
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <circle cx="10" cy="10" r="8"/>
+                                        </svg>
+                                        <a href="#" class="text-pf-blue hover:underline">my-payment-app-pemcfg</a>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">ConfigMap</td>
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <span class="inline-flex items-center text-sm text-green-700">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Created
+                                    </span>
+                                </td>
+                                <td class="px-6 py-3 text-sm text-gray-600">
+                                    Artemis PEMCFG connection configuration
+                                </td>
+                            </tr>
+
+                            <!-- Service Binding Secret -->
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <circle cx="10" cy="10" r="8"/>
+                                        </svg>
+                                        <a href="#" class="text-pf-blue hover:underline">my-payment-app-binding</a>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">Secret</td>
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <span class="inline-flex items-center text-sm text-green-700">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Created
+                                    </span>
+                                </td>
+                                <td class="px-6 py-3 text-sm text-gray-600">
+                                    Service binding credentials and connection details
+                                </td>
+                            </tr>
+
+                            <!-- Role Binding -->
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <circle cx="10" cy="10" r="8"/>
+                                        </svg>
+                                        <a href="#" class="text-pf-blue hover:underline">my-payment-app-role-binding</a>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">RoleBinding</td>
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <span class="inline-flex items-center text-sm text-green-700">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Created
+                                    </span>
+                                </td>
+                                <td class="px-6 py-3 text-sm text-gray-600">
+                                    RBAC binding for application role: payment-processor
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Info Section -->
+                <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div class="flex-1">
+                            <h4 class="text-sm font-medium text-blue-900 mb-1">Application Credentials</h4>
+                            <p class="text-sm text-blue-700">
+                                These resources provide secure connectivity to the broker service <strong>ex-aao</strong>.
+                                Use the client certificate and CA from these resources to configure your application's connection to the message broker.
+                                Certificates are automatically provisioned and renewed by <strong>cert-manager</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

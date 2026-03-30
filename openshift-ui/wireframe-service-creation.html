@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create BrokerService - OpenShift Console</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pf-blue': '#0066cc',
+                        'pf-blue-hover': '#004080',
+                        'pf-gray': '#f0f0f0',
+                        'pf-border': '#d2d2d2',
+                        'os-dark': '#1f1f1f',
+                        'os-header': '#292929',
+                        'os-sidebar': '#212427',
+                        'os-nav-hover': '#3c3f42',
+                        'os-warning': '#a30000',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body class="bg-pf-gray font-sans h-screen overflow-hidden">
+    <!-- Warning Banner -->
+    <div class="bg-os-warning text-white text-center py-1 text-xs">
+        OpenShift Local cluster is for development and testing purposes. DON'T use it for production.
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-os-header text-white h-12 flex items-center px-4 shadow-md">
+        <div class="flex items-center space-x-4">
+            <!-- Menu Icon -->
+            <button class="text-white hover:text-gray-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <!-- okd Logo -->
+            <div class="flex items-center space-x-2">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21.665 12.713l-2.43-4.313a3.357 3.357 0 0 0-.124-.198c-.03-.044-.063-.086-.096-.128l-.013-.016a3.605 3.605 0 0 0-.844-.777 3.557 3.557 0 0 0-1.935-.567H8.999L6.57 2.401A3.57 3.57 0 0 0 3.428.287a3.584 3.584 0 0 0-2.143 2.113L.003 6.713v.573l1.282 4.313c.36 1.21 1.29 2.164 2.43 2.573l7.224 4.313a3.585 3.585 0 0 0 3.499 0l7.224-4.313c1.14-.409 2.07-1.363 2.43-2.573l.573-1.886zm-12.667.574v6.86l-5.43-3.144a2.288 2.288 0 0 1-1.283-2.057V8.403l6.713 4.884zm1.142-.859L3.428 7.544l2.43-4.313L12.57 6.86l-2.43 5.568zm7.287 3.715l-5.43 3.144v-6.86l6.713-4.884v6.543c0 .857-.48 1.642-1.283 2.057z"/>
+                </svg>
+                <span class="font-bold text-xl">okd</span>
+            </div>
+        </div>
+        <div class="ml-auto flex items-center space-x-3">
+            <button class="text-gray-300 hover:text-white relative">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                <span class="absolute -top-1 -right-1 bg-pf-blue text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">1</span>
+            </button>
+            <button class="text-gray-300 hover:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+            </button>
+            <button class="text-gray-300 hover:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </button>
+            <button class="text-white hover:text-gray-300 flex items-center space-x-1">
+                <span class="text-sm">kubeadmin</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Project Selector Bar -->
+    <div class="bg-white border-b border-gray-200 px-4 py-2">
+        <div class="flex items-center">
+            <label class="text-sm font-medium text-gray-700 mr-2">Project:</label>
+            <div class="relative">
+                <button class="flex items-center space-x-2 px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pf-blue">
+                    <span class="text-sm">messaging-infra</span>
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex h-[calc(100vh-8rem)]">
+        <!-- Left Sidebar Navigation -->
+        <aside class="bg-os-sidebar text-gray-300 w-56 overflow-y-auto">
+            <nav class="py-2">
+                <!-- Perspective Selector -->
+                <div class="px-3 mb-2">
+                    <button class="w-full flex items-center justify-between px-3 py-2 text-sm text-white hover:bg-os-nav-hover rounded">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                            <span>Administrator</span>
+                        </div>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Navigation Items -->
+                <div class="space-y-0">
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Home</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Operators</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+
+                    <!-- Workloads (Expanded) -->
+                    <div>
+                        <button class="w-full flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                            <span>Workloads</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="bg-os-dark">
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Pods</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Deployments</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">DeploymentConfigs</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">StatefulSets</a>
+                            <a href="#" class="block px-8 py-2 text-sm bg-gray-700 border-l-2 border-white text-white">Brokers</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">BrokerApps</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Secrets</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">ConfigMaps</a>
+                        </div>
+                    </div>
+
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Storage</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto bg-white">
+            <div class="max-w-4xl mx-auto p-6">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <h1 class="text-2xl font-normal text-gray-900 mb-2">Create BrokerService</h1>
+                    <p class="text-sm text-gray-600">
+                        Provision a shared messaging infrastructure broker cluster. This resource defines the underlying broker deployment that applications will connect to via BrokerApp resources.
+                    </p>
+                </div>
+
+                <!-- Form -->
+                <form class="space-y-8">
+                    <!-- Section 1: General Details -->
+                    <div class="bg-white border-t border-gray-200 pt-6">
+                        <h2 class="text-lg font-medium text-gray-900 mb-6">General Details</h2>
+                        <div class="space-y-5">
+                            <!-- Name -->
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-900 mb-2">
+                                    Name <span class="text-red-600">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                    placeholder="my-broker-service"
+                                />
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Unique name for the BrokerService resource.
+                                </p>
+                            </div>
+
+                            <!-- Namespace -->
+                            <div>
+                                <label for="namespace" class="block text-sm font-medium text-gray-900 mb-2">
+                                    Namespace <span class="text-red-600">*</span>
+                                </label>
+                                <select
+                                    id="namespace"
+                                    name="namespace"
+                                    required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                >
+                                    <option value="">Select a namespace</option>
+                                    <option value="default">default</option>
+                                    <option value="messaging-infra">messaging-infra</option>
+                                    <option value="openshift-operators">openshift-operators</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Namespace where the broker cluster will be deployed.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Infrastructure & Capacity -->
+                    <div class="bg-white border-t border-gray-200 pt-6">
+                        <h2 class="text-lg font-medium text-gray-900 mb-6">Infrastructure & Capacity</h2>
+                        <div class="space-y-5">
+                            <!-- Replicas -->
+                            <div>
+                                <label for="replicas" class="block text-sm font-medium text-gray-900 mb-2">
+                                    Replicas <span class="text-red-600">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    id="replicas"
+                                    name="replicas"
+                                    min="1"
+                                    max="10"
+                                    value="1"
+                                    required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                />
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Number of broker pods in the cluster (1-10).
+                                </p>
+                            </div>
+
+                            <!-- Storage Size -->
+                            <div>
+                                <label for="storage" class="block text-sm font-medium text-gray-900 mb-2">
+                                    Storage Size <span class="text-red-600">*</span>
+                                </label>
+                                <div class="flex gap-2">
+                                    <input
+                                        type="number"
+                                        id="storage"
+                                        name="storage"
+                                        min="1"
+                                        value="10"
+                                        required
+                                        class="flex-1 px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                    />
+                                    <select
+                                        id="storage-unit"
+                                        name="storage-unit"
+                                        class="px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                    >
+                                        <option value="Gi">Gi</option>
+                                        <option value="Mi">Mi</option>
+                                        <option value="Ti">Ti</option>
+                                    </select>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Persistent storage size per broker pod.
+                                </p>
+                            </div>
+
+                            <!-- Memory (RAM) -->
+                            <div>
+                                <label for="memory" class="block text-sm font-medium text-gray-900 mb-2">
+                                    Memory (RAM) <span class="text-red-600">*</span>
+                                </label>
+                                <div class="flex gap-2">
+                                    <input
+                                        type="number"
+                                        id="memory"
+                                        name="memory"
+                                        min="256"
+                                        value="2"
+                                        required
+                                        class="flex-1 px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                    />
+                                    <select
+                                        id="memory-unit"
+                                        name="memory-unit"
+                                        class="px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                    >
+                                        <option value="Mi">Mi</option>
+                                        <option value="Gi" selected>Gi</option>
+                                    </select>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Memory allocation per broker pod.
+                                </p>
+                            </div>
+
+                            <!-- High Availability Toggle -->
+                            <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded border border-gray-200">
+                                <div>
+                                    <label for="ha-toggle" class="block text-sm font-medium text-gray-900">
+                                        High Availability
+                                    </label>
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        Enable shared storage replication and failover capabilities.
+                                    </p>
+                                </div>
+                                <div class="relative inline-block w-12 h-6 transition duration-200 ease-in-out">
+                                    <input
+                                        type="checkbox"
+                                        id="ha-toggle"
+                                        name="ha-toggle"
+                                        class="peer sr-only"
+                                    />
+                                    <label
+                                        for="ha-toggle"
+                                        class="block h-6 w-12 rounded-full bg-gray-300 cursor-pointer peer-checked:bg-pf-blue peer-focus:ring-2 peer-focus:ring-pf-blue"
+                                    ></label>
+                                    <span
+                                        class="absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-6"
+                                    ></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="flex justify-start gap-3 pt-6 pb-8 border-t border-gray-200 mt-8">
+                        <button
+                            type="submit"
+                            class="px-4 py-1.5 bg-pf-blue text-white text-sm font-normal rounded hover:bg-pf-blue-hover focus:outline-none transition"
+                        >
+                            Create
+                        </button>
+                        <button
+                            type="button"
+                            class="px-4 py-1.5 bg-white text-gray-700 text-sm font-normal border border-gray-300 rounded hover:bg-gray-50 focus:outline-none transition"
+                            onclick="window.history.back()"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
