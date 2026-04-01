@@ -348,18 +348,21 @@ Before completing any wireframe update, verify:
 
 The wireframes use three specific ActiveMQ Artemis queue metrics that are accurately tracked:
 
-- **Message Count** (`getMessageCount`): Total number of messages in queue - displayed in tables and charts
-- **Consumer Count** (`getConsumerCount`): Number of active consumers - displayed in tables and charts
-- **Delivering Count** (`getDeliveringCount`): Number of messages being delivered - displayed in tables and charts
+- **Message Count** (`getMessageCount`): Total number of messages in queue
+- **Consumer Count** (`getConsumerCount`): Number of active consumers
+- **Delivering Count** (`getDeliveringCount`): Number of messages being delivered
 
-**IMPORTANT**: Only use these three metrics in all wireframes. Do not add metrics for producers or other values that are difficult to track accurately across different protocols.
+**Derived Metrics:**
+- **Queue Depth**: Calculated as `Message Count - Delivering Count`, represents messages waiting to be processed
+
+**IMPORTANT**: Only use these three base metrics. Do not add metrics for producers or other values that are difficult to track accurately across different protocols.
 
 Where metrics appear:
 - **BrokerService List**: Table columns for Message Count, Consumer Count, Delivering Count
-- **BrokerService Overview**: Charts for each metric per app (6 charts total)
+- **BrokerService Overview**: Charts for Queue Depth per App and Consumer Count per App (5 charts total: Memory, CPU, Memory per App, Queue Depth per App, Consumer Count per App)
 - **BrokerService Loaded Apps Table**: Consumer Count column
 - **BrokerApp List**: Table columns for Message Count, Consumer Count
-- **BrokerApp Overview**: Charts for Message Count and Consumer Count (2 charts total)
+- **BrokerApp Overview**: Charts for Queue Depth and Consumer Count (2 charts total)
 
 ## Common Patterns
 

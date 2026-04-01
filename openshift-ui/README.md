@@ -42,13 +42,12 @@ These wireframes show the Administrator perspective with full cluster access.
 **Key Features**:
 - Breadcrumb navigation and status badge
 - Details section (Labels, Annotations)
-- Metrics section with 6 charts:
+- Metrics section with 5 charts:
   - Total Memory Usage
   - Total CPU Usage
   - Memory Usage per App (multi-line chart)
-  - Message Count per App (multi-line chart)
+  - Queue Depth per App (multi-line chart)
   - Consumer Count per App (multi-line chart)
-  - Delivering Count per App (multi-line chart)
 - Loaded Apps table showing provisioned BrokerApps (App Name, Status, Consumer Count)
 - Conditions table showing resource status
 
@@ -100,7 +99,7 @@ These wireframes show the Developer perspective with limited namespace access. D
 - Breadcrumb navigation, status badge, and provisioned service indicator
 - Details section (Application Role, Labels, Annotations)
 - App-specific metrics (2 charts):
-  - Message Count
+  - Queue Depth
   - Consumer Count
 - Connectivity Tester card with "Run Connectivity Test" button and mock success result showing TLS validation steps
 - Messaging Capabilities section displaying configured addresses (Produces To, Consumes From, Subscribes To)
@@ -158,11 +157,15 @@ The wireframes use three specific ActiveMQ Artemis queue metrics that are accura
 - **Consumer Count** (`getConsumerCount`): Number of active consumers attached to the queue
 - **Delivering Count** (`getDeliveringCount`): Number of messages currently being delivered to consumers
 
+### Derived Metrics
+
+- **Queue Depth**: Calculated as `Message Count - Delivering Count`, represents messages waiting to be processed (not yet in-flight to consumers)
+
 These metrics are displayed throughout the wireframes:
-- **BrokerService List**: Shows aggregated metrics across all queues
-- **BrokerService Overview**: Shows per-app metrics in individual charts
-- **BrokerApp List**: Shows metrics for queues used by each app
-- **BrokerApp Overview**: Shows metrics specific to the app's queues
+- **BrokerService List**: Shows Message Count, Consumer Count, and Delivering Count columns
+- **BrokerService Overview**: Shows Queue Depth per App and Consumer Count per App charts
+- **BrokerApp List**: Shows Message Count and Consumer Count columns
+- **BrokerApp Overview**: Shows Queue Depth and Consumer Count charts
 
 ## Technology Stack
 - HTML5
