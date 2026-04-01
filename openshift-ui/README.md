@@ -101,7 +101,11 @@ These wireframes show the Developer perspective with limited namespace access. D
 - App-specific metrics (2 charts):
   - Queue Depth
   - Consumer Count
-- Connectivity Tester card with "Run Connectivity Test" button and mock success result showing TLS validation steps
+- Connection Information section displaying:
+  - Broker host DNS address
+  - Dedicated acceptor port
+  - Reference to connection secret
+  - Connectivity tester with "Run Connectivity Test" button and mock success result showing TLS validation steps
 - Messaging Capabilities section displaying configured addresses (Produces To, Consumes From, Subscribes To)
 - Conditions table showing resource status (Provisioned, CredentialsReady, AddressesCreated, RBACApplied)
 
@@ -113,6 +117,7 @@ These wireframes show the Developer perspective with limited namespace access. D
 - **Critical credential resources**:
   - `my-payment-app-client-cert` (Secret): TLS client certificate for broker authentication
   - `my-payment-app-prometheus-client-cert` (Secret): TLS certificate for Prometheus metrics
+  - `my-payment-app-connection` (Secret): Broker connection details (host, port, acceptor)
   - `data-plane-ca` (ConfigMap): CA certificate for TLS trust
 - cert-manager CertificateRequests showing automated certificate lifecycle management
 - Additional resources: PEMCFG ConfigMap, service binding secret, role binding
