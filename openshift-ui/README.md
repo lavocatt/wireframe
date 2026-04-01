@@ -15,6 +15,12 @@ BrokerApps discover and bind to BrokerServices using Kubernetes label selectors:
 - The operator provisions the app to any BrokerService matching the label criteria
 - This allows flexible, multi-tenant messaging infrastructure with automated service binding
 
+**Label Suggestions in UI**:
+- The creation forms offer three label sources: **Available Labels** (from `artemis-label-suggestions` ConfigMap), **Previously Used Labels** (from browser history), and custom input
+- Cluster administrators create the `artemis-label-suggestions` ConfigMap in each namespace during provisioning
+- This allows different namespaces to have different suggested labels (e.g., dev vs prod environments)
+- Falls back to custom input if ConfigMap doesn't exist
+
 ### User Personas
 - **Cluster Operator** (kubeadmin): Full cluster access via Administrator perspective, manages BrokerServices
 - **Developer** (developer): Limited namespace access via Developer perspective, manages BrokerApps only in Workloads section
@@ -32,7 +38,12 @@ These wireframes show the Administrator perspective with full cluster access.
 - **Configure Via** toggle: Switch between Form View and YAML View
 - **Form View**:
   - General Details section (Name, Namespace)
-  - Labels selector with drag-and-drop interface for predefined labels (forWorkQueue, forEventStreaming, tier, region)
+  - Labels selector with three sources:
+    - **Available Labels**: From `artemis-label-suggestions` ConfigMap (gray badges)
+    - **Previously Used Labels**: From browser localStorage (purple badges)
+    - **Custom Label Input**: Free-form text field with + button
+  - Full drag-and-drop functionality for all label sources
+  - Info box explaining ConfigMap mechanism for cluster administrators
   - Infrastructure & Capacity section (Memory/RAM allocation)
 - **YAML View**: Direct YAML editor with toolbar (download, copy, expand)
 - OpenShift Console styling with project selector bar
@@ -87,7 +98,12 @@ These wireframes show the Developer perspective with limited namespace access. D
 - **Configure Via** toggle: Switch between Form View and YAML View
 - **Form View**:
   - Application Details section (Name, Namespace, Application Role for RBAC)
-  - Service Selector with drag-and-drop interface for matchLabels (selects which BrokerService to bind to)
+  - Service Selector with three label sources:
+    - **Available Labels**: From `artemis-label-suggestions` ConfigMap (gray badges)
+    - **Previously Used Labels**: From browser localStorage (purple badges)
+    - **Custom Match Label Input**: Free-form text field with + button
+  - Full drag-and-drop functionality for matchLabels (selects which BrokerService to bind to)
+  - Info box explaining ConfigMap mechanism for cluster administrators
   - Messaging Capabilities section with three subsections:
     - **Produces To** (blue border): Queues/topics the app will send messages to
     - **Consumes From** (green border): Queues the app will read from

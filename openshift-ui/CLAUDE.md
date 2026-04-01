@@ -427,57 +427,130 @@ kind: BrokerService
 ```
 
 ### Labels Selector Pattern (Creation Forms)
-Both BrokerService and BrokerApp creation forms include a labels/selector interface with drag-and-drop style:
+Both BrokerService and BrokerApp creation forms include a labels/selector interface with drag-and-drop functionality and multiple label sources:
 
 **BrokerService**: Labels that identify the service
 **BrokerApp**: Selector matchLabels that find the service
 
-```html
-<!-- Labels Section -->
-<div>
-    <label class="block text-sm font-medium text-gray-900 mb-2">
-        Labels / Service Selector <span class="text-red-600">*</span>
-    </label>
-    <p class="text-xs text-gray-500 mb-3">
-        Description text
-    </p>
+#### Label Sources
 
-    <!-- Available Labels (drag source) -->
-    <div class="mb-3">
-        <span class="text-xs font-medium text-gray-700">Available Labels</span>
-        <div class="mt-2 flex flex-wrap gap-2">
-            <span class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 cursor-move hover:bg-gray-200">
-                <svg class="w-3 h-3 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                </svg>
-                forWorkQueue: "true"
-            </span>
-            <!-- More predefined labels... -->
+The creation forms present three sources of labels:
+
+1. **Available Labels** (gray badges): Sourced from `artemis-label-suggestions` ConfigMap in the current namespace
+2. **Previously Used Labels** (purple badges): Sourced from browser localStorage (user's label history)
+3. **Custom Label Input**: Free-form text field for ad-hoc labels
+
+#### Implementation Details
+
+**Available Labels ConfigMap**:
+- The OpenShift Console dynamic plugin reads the ConfigMap named `artemis-label-suggestions` from the **current namespace**
+- Cluster administrators create this ConfigMap during namespace provisioning as part of the namespace setup
+- This allows different namespaces to have different suggested labels (e.g., dev vs prod environments)
+- ConfigMap format (example):
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: artemis-label-suggestions
+    namespace: my-application
+  data:
+    labels: |
+      - forWorkQueue: "true"
+      - forEventStreaming: "true"
+      - tier: "production"
+      - region: "us-east"
+  ```
+
+**Previously Used Labels**:
+- Stored in browser localStorage as JSON array
+- Populated automatically when users create BrokerService/BrokerApp resources
+- Personal to each user (not shared across browser sessions or users)
+
+**HTML Pattern**:
+
+```html
+<!-- Info Box explaining ConfigMap mechanism -->
+<div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+    <div class="flex items-start">
+        <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+        <div class="flex-1 text-xs text-blue-800">
+            <strong>For cluster administrators:</strong> The "Available Labels" section is populated from a ConfigMap named <code class="bg-blue-100 px-1 rounded">artemis-label-suggestions</code> in the current namespace. Create this ConfigMap during namespace provisioning to provide developers with standardized label options.
         </div>
     </div>
+</div>
 
-    <!-- Selected Labels (drop target) -->
-    <div class="border-2 border-dashed border-gray-300 rounded p-3 bg-gray-50 min-h-[80px]">
-        <span class="text-xs font-medium text-gray-700">Selected Labels / Match Labels</span>
-        <div class="mt-2 flex flex-wrap gap-2">
-            <span class="inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-800 text-sm rounded border border-blue-300">
-                forWorkQueue: "true"
-                <button class="ml-2 text-blue-600 hover:text-blue-800" title="Remove">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </span>
-        </div>
+<!-- Available Labels (drag source) -->
+<div class="mb-3">
+    <div class="flex items-center gap-1 mb-2">
+        <span class="text-xs font-medium text-gray-700">Available Labels</span>
+        <svg class="w-3 h-3 text-gray-500 cursor-help" fill="currentColor" viewBox="0 0 20 20" title="Sourced from artemis-label-suggestions ConfigMap in current namespace">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+    </div>
+    <div class="mt-2 flex flex-wrap gap-2">
+        <span draggable="true" ondragstart="drag(event)" data-label='forWorkQueue: "true"' class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 cursor-move hover:bg-gray-200">
+            <svg class="w-3 h-3 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
+            </svg>
+            forWorkQueue: "true"
+        </span>
+        <!-- More labels from ConfigMap... -->
+    </div>
+</div>
+
+<!-- Previously Used Labels (drag source) -->
+<div class="mb-3">
+    <div class="flex items-center gap-1 mb-2">
+        <span class="text-xs font-medium text-gray-700">Previously Used Labels</span>
+        <svg class="w-3 h-3 text-gray-500 cursor-help" fill="currentColor" viewBox="0 0 20 20" title="Labels you've used in previous resources (from browser history)">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+    </div>
+    <div class="mt-2 flex flex-wrap gap-2">
+        <span draggable="true" ondragstart="drag(event)" data-label='env: "staging"' class="inline-flex items-center px-3 py-1.5 bg-purple-50 text-purple-700 text-sm rounded border border-purple-200 cursor-move hover:bg-purple-100">
+            <svg class="w-3 h-3 mr-1.5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
+            </svg>
+            env: "staging"
+        </span>
+        <!-- More labels from localStorage... -->
+    </div>
+</div>
+
+<!-- Custom Label Input -->
+<div class="mb-3">
+    <span class="text-xs font-medium text-gray-700">Add Custom Label</span>
+    <div class="mt-2 flex gap-2">
+        <input type="text" id="custom-label-input" onkeypress="handleKeyPress(event)"
+               placeholder='e.g., environment: "staging"'
+               class="flex-1 px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue" />
+        <button type="button" onclick="addCustomLabel()"
+                class="inline-flex items-center px-3 py-1.5 bg-pf-blue text-white text-sm rounded hover:bg-pf-blue-hover focus:outline-none">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<!-- Selected Labels (drop target) -->
+<div ondrop="drop(event)" ondragover="allowDrop(event)" class="border-2 border-dashed border-gray-300 rounded p-3 bg-gray-50 min-h-[80px] hover:border-pf-blue hover:bg-blue-50">
+    <span class="text-xs font-medium text-gray-700">Selected Labels (drag here)</span>
+    <div id="selected-labels" class="mt-2 flex flex-wrap gap-2">
+        <!-- Labels added dynamically via drag & drop or custom input -->
     </div>
 </div>
 ```
 
-**Predefined Labels:**
+**Common Label Conventions:**
 - `forWorkQueue: "true"` - For work queue messaging patterns
 - `forEventStreaming: "true"` - For event streaming patterns
-- `tier: "production"` - Production tier
-- `region: "us-east"` - Regional deployment
+- `tier: "production"` / `tier: "staging"` / `tier: "dev"` - Environment tier
+- `region: "us-east"` / `region: "eu-west"` - Regional deployment
+- `team: "payments"` / `team: "analytics"` - Team ownership
+- `env: "dev"` / `env: "prod"` - Environment designation
 
 ### Labels Display Pattern (List Views)
 Both BrokerService and BrokerApp list views display labels as compact badges:
