@@ -30,6 +30,24 @@
             overflow-x: hidden;
         }
     </style>
+    <script>
+        function toggleLabels(element) {
+            const labelsContainer = element.closest('.flex');
+            const hiddenLabels = labelsContainer.querySelectorAll('.hidden-label');
+            const moreButton = element;
+
+            if (hiddenLabels[0].classList.contains('hidden')) {
+                // Show all labels
+                hiddenLabels.forEach(label => label.classList.remove('hidden'));
+                moreButton.textContent = 'show less';
+            } else {
+                // Hide labels again
+                hiddenLabels.forEach(label => label.classList.add('hidden'));
+                const count = hiddenLabels.length;
+                moreButton.textContent = `+${count} more`;
+            }
+        }
+    </script>
 </head>
 <body class="bg-pf-gray font-sans h-screen overflow-hidden">
     <!-- Warning Banner -->
@@ -214,10 +232,13 @@
                                     Status
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600">
+                                    Selector Labels
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600">
                                     Provisioned Service
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600">
-                                    Message Count
+                                    Queue Depth
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600">
                                     Consumer Count
@@ -234,6 +255,19 @@
                                 </td>
                                 <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">
                                     Provisioned
+                                </td>
+                                <td class="px-6 py-3">
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                            forWorkQueue: "true"
+                                        </span>
+                                        <span class="hidden-label hidden inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                            tier: "production"
+                                        </span>
+                                        <span onclick="toggleLabels(this)" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-200 text-gray-600 cursor-pointer hover:bg-gray-300">
+                                            +1 more
+                                        </span>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-3 whitespace-nowrap">
                                     <a href="#" class="text-pf-blue hover:underline text-sm">
@@ -258,6 +292,13 @@
                                 <td class="px-6 py-3 whitespace-nowrap text-sm text-yellow-600">
                                     Pending
                                 </td>
+                                <td class="px-6 py-3">
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                            tier: "production"
+                                        </span>
+                                    </div>
+                                </td>
                                 <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-400">
                                     —
                                 </td>
@@ -278,6 +319,13 @@
                                 </td>
                                 <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">
                                     Provisioned
+                                </td>
+                                <td class="px-6 py-3">
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                            forEventStreaming: "true"
+                                        </span>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-3 whitespace-nowrap">
                                     <a href="#" class="text-pf-blue hover:underline text-sm">

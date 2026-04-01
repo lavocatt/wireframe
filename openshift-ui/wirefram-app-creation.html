@@ -261,6 +261,63 @@
                                     Name of the role or service account that will be authorized to use these messaging capabilities.
                                 </p>
                             </div>
+
+                            <!-- Service Selector (Match Labels) -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">
+                                    Service Selector <span class="text-red-600">*</span>
+                                </label>
+                                <p class="text-xs text-gray-500 mb-3">
+                                    Select labels to match a BrokerService. Your app will be provisioned to services with these labels.
+                                </p>
+
+                                <!-- Available Labels (drag source) -->
+                                <div class="mb-3">
+                                    <span class="text-xs font-medium text-gray-700">Available Labels</span>
+                                    <div class="mt-2 flex flex-wrap gap-2">
+                                        <span class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 cursor-move hover:bg-gray-200">
+                                            <svg class="w-3 h-3 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                            </svg>
+                                            forWorkQueue: "true"
+                                        </span>
+                                        <span class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 cursor-move hover:bg-gray-200">
+                                            <svg class="w-3 h-3 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                            </svg>
+                                            forEventStreaming: "true"
+                                        </span>
+                                        <span class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 cursor-move hover:bg-gray-200">
+                                            <svg class="w-3 h-3 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                            </svg>
+                                            tier: "production"
+                                        </span>
+                                        <span class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 cursor-move hover:bg-gray-200">
+                                            <svg class="w-3 h-3 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                            </svg>
+                                            region: "us-east"
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Selected Match Labels (drop target) -->
+                                <div class="border-2 border-dashed border-gray-300 rounded p-3 bg-gray-50 min-h-[80px]">
+                                    <span class="text-xs font-medium text-gray-700">Match Labels</span>
+                                    <div class="mt-2 flex flex-wrap gap-2">
+                                        <!-- Example: One label already selected -->
+                                        <span class="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-800 text-sm rounded border border-green-300">
+                                            forWorkQueue: "true"
+                                            <button class="ml-2 text-green-600 hover:text-green-800" title="Remove">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -471,22 +528,22 @@
                                 class="w-full font-mono text-sm p-4 bg-white border-0 focus:outline-none focus:ring-0 resize-none"
                                 rows="20"
                                 spellcheck="false"
-                            >apiVersion: broker.amq.io/v1beta1
+                            >apiVersion: arkmq.org/v1beta2
 kind: BrokerApp
 metadata:
-  name: my-payment-app
-  namespace: my-application
+  name: first-app
+  namespace: service-app-project
 spec:
-  role: payment-processor
+  selector:
+    matchLabels:
+      forWorkQueue: "true"
+  acceptor:
+    port: 61616
   capabilities:
-    producesTo:
-      - payment.transactions
-      - payment.confirmations
-    consumesFrom:
-      - payment.requests
-      - payment.refunds
-    subscribesTo:
-      - payment.notifications</textarea>
+  - producerOf:
+    - address: "APP.JOBS"
+  - consumerOf:
+    - address: "APP.JOBS"</textarea>
                         </div>
                     </div>
 

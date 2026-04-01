@@ -8,6 +8,13 @@ The ActiveMQ Artemis Operator uses a split-CRD design:
 - **BrokerService**: Managed by cluster operators (kubeadmin), defines the messaging infrastructure (broker cluster, storage, HA, PKI)
 - **BrokerApp**: Managed by application developers (developer), defines application messaging intent and binds to a BrokerService
 
+### Label-Based Service Discovery
+BrokerApps discover and bind to BrokerServices using Kubernetes label selectors:
+- **BrokerService** resources are labeled (e.g., `forWorkQueue: "true"`, `tier: "production"`)
+- **BrokerApp** resources use `selector.matchLabels` to find compatible BrokerServices
+- The operator provisions the app to any BrokerService matching the label criteria
+- This allows flexible, multi-tenant messaging infrastructure with automated service binding
+
 ### User Personas
 - **Cluster Operator** (kubeadmin): Full cluster access via Administrator perspective, manages BrokerServices
 - **Developer** (developer): Limited namespace access via Developer perspective, manages BrokerApps only in Workloads section
@@ -23,7 +30,10 @@ These wireframes show the Administrator perspective with full cluster access.
 **Target User**: Cluster operators (kubeadmin)
 **Key Features**:
 - **Configure Via** toggle: Switch between Form View and YAML View
-- **Form View**: General Details section (Name, Namespace), Infrastructure & Capacity section (Memory/RAM allocation)
+- **Form View**:
+  - General Details section (Name, Namespace)
+  - Labels selector with drag-and-drop interface for predefined labels (forWorkQueue, forEventStreaming, tier, region)
+  - Infrastructure & Capacity section (Memory/RAM allocation)
 - **YAML View**: Direct YAML editor with toolbar (download, copy, expand)
 - OpenShift Console styling with project selector bar
 
@@ -31,10 +41,13 @@ These wireframes show the Administrator perspective with full cluster access.
 **Purpose**: List view of all BrokerService instances
 **Target User**: Cluster operators
 **Key Features**:
-- Data table with 8 columns: Name, Status, Apps Loaded, Message Count, Consumer Count, Delivering Count, Memory Usage, CPU Usage
+- Data table with 8 columns: Name, Status, Labels, Apps Loaded, Queue Depth, Consumer Count, Memory Usage, CPU Usage
+- Labels displayed as badges with "+N more" indicator for multiple labels (clickable to expand/collapse)
+- Queue Depth calculated as Message Count - Delivering Count
 - Progress bars for resource utilization (Memory, CPU)
 - Filter/search functionality
 - "Create BrokerService" action button
+- Interactive JavaScript for expanding/collapsing labels
 
 #### 3. wireframe-broker-details-overview.html
 **Purpose**: Day 2 details page for a BrokerService (Overview tab)
@@ -74,6 +87,7 @@ These wireframes show the Developer perspective with limited namespace access. D
 - **Configure Via** toggle: Switch between Form View and YAML View
 - **Form View**:
   - Application Details section (Name, Namespace, Application Role for RBAC)
+  - Service Selector with drag-and-drop interface for matchLabels (selects which BrokerService to bind to)
   - Messaging Capabilities section with three subsections:
     - **Produces To** (blue border): Queues/topics the app will send messages to
     - **Consumes From** (green border): Queues the app will read from
@@ -86,11 +100,14 @@ These wireframes show the Developer perspective with limited namespace access. D
 **Purpose**: List view of all BrokerApp instances
 **Target User**: Application developers
 **Key Features**:
-- Data table with 5 columns: Name, Status, Provisioned Service, Message Count, Consumer Count
+- Data table with 6 columns: Name, Status, Selector Labels, Provisioned Service, Queue Depth, Consumer Count
+- Selector Labels displayed as badges with "+N more" indicator (clickable to expand/collapse)
 - Shows provisioning status (Provisioned, Pending)
 - Links to provisioned BrokerService
+- Queue Depth shown for provisioned apps
 - Filter/search functionality
 - "Create BrokerApp" action button
+- Interactive JavaScript for expanding/collapsing labels
 
 #### 7. wireframe-app-details-overview.html
 **Purpose**: Day 2 details page for a BrokerApp (Overview tab)

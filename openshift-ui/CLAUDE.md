@@ -358,11 +358,13 @@ The wireframes use three specific ActiveMQ Artemis queue metrics that are accura
 **IMPORTANT**: Only use these three base metrics. Do not add metrics for producers or other values that are difficult to track accurately across different protocols.
 
 Where metrics appear:
-- **BrokerService List**: Table columns for Message Count, Consumer Count, Delivering Count
+- **BrokerService List**: Table columns for Queue Depth (derived), Consumer Count
 - **BrokerService Overview**: Charts for Queue Depth per App and Consumer Count per App (5 charts total: Memory, CPU, Memory per App, Queue Depth per App, Consumer Count per App)
 - **BrokerService Loaded Apps Table**: Consumer Count column
-- **BrokerApp List**: Table columns for Message Count, Consumer Count
+- **BrokerApp List**: Table columns for Queue Depth (derived), Consumer Count
 - **BrokerApp Overview**: Charts for Queue Depth and Consumer Count (2 charts total)
+
+**Note**: List views show Queue Depth (the derived metric) rather than raw Message Count/Delivering Count, as it's more operationally relevant. Detail views show charts with Queue Depth as well.
 
 ## Common Patterns
 
@@ -423,6 +425,108 @@ kind: BrokerService
     <!-- Action buttons -->
 </div>
 ```
+
+### Labels Selector Pattern (Creation Forms)
+Both BrokerService and BrokerApp creation forms include a labels/selector interface with drag-and-drop style:
+
+**BrokerService**: Labels that identify the service
+**BrokerApp**: Selector matchLabels that find the service
+
+```html
+<!-- Labels Section -->
+<div>
+    <label class="block text-sm font-medium text-gray-900 mb-2">
+        Labels / Service Selector <span class="text-red-600">*</span>
+    </label>
+    <p class="text-xs text-gray-500 mb-3">
+        Description text
+    </p>
+
+    <!-- Available Labels (drag source) -->
+    <div class="mb-3">
+        <span class="text-xs font-medium text-gray-700">Available Labels</span>
+        <div class="mt-2 flex flex-wrap gap-2">
+            <span class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 cursor-move hover:bg-gray-200">
+                <svg class="w-3 h-3 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                forWorkQueue: "true"
+            </span>
+            <!-- More predefined labels... -->
+        </div>
+    </div>
+
+    <!-- Selected Labels (drop target) -->
+    <div class="border-2 border-dashed border-gray-300 rounded p-3 bg-gray-50 min-h-[80px]">
+        <span class="text-xs font-medium text-gray-700">Selected Labels / Match Labels</span>
+        <div class="mt-2 flex flex-wrap gap-2">
+            <span class="inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-800 text-sm rounded border border-blue-300">
+                forWorkQueue: "true"
+                <button class="ml-2 text-blue-600 hover:text-blue-800" title="Remove">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </span>
+        </div>
+    </div>
+</div>
+```
+
+**Predefined Labels:**
+- `forWorkQueue: "true"` - For work queue messaging patterns
+- `forEventStreaming: "true"` - For event streaming patterns
+- `tier: "production"` - Production tier
+- `region: "us-east"` - Regional deployment
+
+### Labels Display Pattern (List Views)
+Both BrokerService and BrokerApp list views display labels as compact badges:
+
+```html
+<!-- Labels column in table -->
+<td class="px-6 py-3">
+    <div class="flex flex-wrap gap-1">
+        <!-- First label badge -->
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+            forWorkQueue: "true"
+        </span>
+        <!-- +N more indicator if multiple labels -->
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-200 text-gray-600">
+            +2 more
+        </span>
+    </div>
+</td>
+```
+
+**Design choices:**
+- Show first label and "+N more" indicator for services with multiple labels
+- Single label shown without "+N more" indicator
+- Keeps rows compact while indicating presence of additional labels
+- Clicking "+N more" expands to show all labels inline, changes to "show less"
+- Additional labels have `hidden-label` class and `hidden` utility class
+- JavaScript function `toggleLabels()` handles the expand/collapse behavior
+
+**JavaScript for label expansion:**
+```javascript
+function toggleLabels(element) {
+    const labelsContainer = element.closest('.flex');
+    const hiddenLabels = labelsContainer.querySelectorAll('.hidden-label');
+    const moreButton = element;
+
+    if (hiddenLabels[0].classList.contains('hidden')) {
+        // Show all labels
+        hiddenLabels.forEach(label => label.classList.remove('hidden'));
+        moreButton.textContent = 'show less';
+    } else {
+        // Hide labels again
+        hiddenLabels.forEach(label => label.classList.add('hidden'));
+        const count = hiddenLabels.length;
+        moreButton.textContent = `+${count} more`;
+    }
+}
+```
+
+Place this script in the `<head>` section of list view wireframes.
 
 ### Link Pattern
 ```html
