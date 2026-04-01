@@ -344,6 +344,23 @@ Before completing any wireframe update, verify:
 - CertificateRequest: `[name]-cert-[random-suffix]` (e.g., `broker-cert-xyz12`)
 - CertificateRequest status: Always "Approved" (green badge)
 
+### Artemis Metrics
+
+The wireframes use three specific ActiveMQ Artemis queue metrics that are accurately tracked:
+
+- **Message Count** (`getMessageCount`): Total number of messages in queue - displayed in tables and charts
+- **Consumer Count** (`getConsumerCount`): Number of active consumers - displayed in tables and charts
+- **Delivering Count** (`getDeliveringCount`): Number of messages being delivered - displayed in tables and charts
+
+**IMPORTANT**: Only use these three metrics in all wireframes. Do not add metrics for producers or other values that are difficult to track accurately across different protocols.
+
+Where metrics appear:
+- **BrokerService List**: Table columns for Message Count, Consumer Count, Delivering Count
+- **BrokerService Overview**: Charts for each metric per app (6 charts total)
+- **BrokerService Loaded Apps Table**: Consumer Count column
+- **BrokerApp List**: Table columns for Message Count, Consumer Count
+- **BrokerApp Overview**: Charts for Message Count and Consumer Count (2 charts total)
+
 ## Common Patterns
 
 ### Form View / YAML View Toggle (Creation Pages)

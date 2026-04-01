@@ -31,7 +31,7 @@ These wireframes show the Administrator perspective with full cluster access.
 **Purpose**: List view of all BrokerService instances
 **Target User**: Cluster operators
 **Key Features**:
-- Data table with 8 columns: Name, Status, Apps Loaded, Avg Queue Depth, Memory Usage, CPU Usage, Total Consumers, Total Producers
+- Data table with 8 columns: Name, Status, Apps Loaded, Message Count, Consumer Count, Delivering Count, Memory Usage, CPU Usage
 - Progress bars for resource utilization (Memory, CPU)
 - Filter/search functionality
 - "Create BrokerService" action button
@@ -42,14 +42,14 @@ These wireframes show the Administrator perspective with full cluster access.
 **Key Features**:
 - Breadcrumb navigation and status badge
 - Details section (Labels, Annotations)
-- Metrics section with 6 charts in 3x2 grid:
+- Metrics section with 6 charts:
   - Total Memory Usage
   - Total CPU Usage
   - Memory Usage per App (multi-line chart)
-  - Queue Depth per App (multi-line chart)
-  - Consumers per App (multi-line chart)
-  - Producers per App (multi-line chart)
-- Loaded Apps table showing bound BrokerApps
+  - Message Count per App (multi-line chart)
+  - Consumer Count per App (multi-line chart)
+  - Delivering Count per App (multi-line chart)
+- Loaded Apps table showing bound BrokerApps (App Name, Status, Consumer Count)
 - Conditions table showing resource status
 
 #### 4. wireframe-broker-details-resources.html
@@ -87,7 +87,7 @@ These wireframes show the Developer perspective with limited namespace access. D
 **Purpose**: List view of all BrokerApp instances
 **Target User**: Application developers
 **Key Features**:
-- Data table with 6 columns: Name, Status, Bound Service, Queue Depth, Producers, Consumers
+- Data table with 5 columns: Name, Status, Bound Service, Message Count, Consumer Count
 - Shows binding status (Bound, Pending)
 - Links to bound BrokerService
 - Filter/search functionality
@@ -99,10 +99,9 @@ These wireframes show the Developer perspective with limited namespace access. D
 **Key Features**:
 - Breadcrumb navigation, status badge, and bound service indicator
 - Details section (Application Role, Labels, Annotations)
-- App-specific metrics (3 charts):
-  - Queue Depth
-  - Active Producers
-  - Active Consumers
+- App-specific metrics (2 charts):
+  - Message Count
+  - Consumer Count
 - Connectivity Tester card with "Run Connectivity Test" button and mock success result showing TLS validation steps
 - Messaging Capabilities section displaying configured addresses (Produces To, Consumes From, Subscribes To)
 
@@ -150,6 +149,20 @@ The wireframes demonstrate a dual-PKI architecture:
 - **Control Plane PKI**: For operator-to-broker communication (broker-cert, operator-manager-ca)
 - **Data Plane PKI**: For app-to-broker communication (data-plane-broker-cert, data-plane-ca, client certs)
 - **cert-manager integration**: All certificates show corresponding CertificateRequest resources
+
+## Artemis Metrics
+
+The wireframes use three specific ActiveMQ Artemis queue metrics that are accurately tracked by the broker:
+
+- **Message Count** (`getMessageCount`): Total number of messages currently in the queue
+- **Consumer Count** (`getConsumerCount`): Number of active consumers attached to the queue
+- **Delivering Count** (`getDeliveringCount`): Number of messages currently being delivered to consumers
+
+These metrics are displayed throughout the wireframes:
+- **BrokerService List**: Shows aggregated metrics across all queues
+- **BrokerService Overview**: Shows per-app metrics in individual charts
+- **BrokerApp List**: Shows metrics for queues used by each app
+- **BrokerApp Overview**: Shows metrics specific to the app's queues
 
 ## Technology Stack
 - HTML5
