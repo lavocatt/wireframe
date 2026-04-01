@@ -49,7 +49,7 @@ These wireframes show the Administrator perspective with full cluster access.
   - Message Count per App (multi-line chart)
   - Consumer Count per App (multi-line chart)
   - Delivering Count per App (multi-line chart)
-- Loaded Apps table showing bound BrokerApps (App Name, Status, Consumer Count)
+- Loaded Apps table showing provisioned BrokerApps (App Name, Status, Consumer Count)
 - Conditions table showing resource status
 
 #### 4. wireframe-broker-details-resources.html
@@ -87,9 +87,9 @@ These wireframes show the Developer perspective with limited namespace access. D
 **Purpose**: List view of all BrokerApp instances
 **Target User**: Application developers
 **Key Features**:
-- Data table with 5 columns: Name, Status, Bound Service, Message Count, Consumer Count
-- Shows binding status (Bound, Pending)
-- Links to bound BrokerService
+- Data table with 5 columns: Name, Status, Provisioned Service, Message Count, Consumer Count
+- Shows provisioning status (Provisioned, Pending)
+- Links to provisioned BrokerService
 - Filter/search functionality
 - "Create BrokerApp" action button
 
@@ -97,7 +97,7 @@ These wireframes show the Developer perspective with limited namespace access. D
 **Purpose**: Day 2 details page for a BrokerApp (Overview tab)
 **Target User**: Application developers
 **Key Features**:
-- Breadcrumb navigation, status badge, and bound service indicator
+- Breadcrumb navigation, status badge, and provisioned service indicator
 - Details section (Application Role, Labels, Annotations)
 - App-specific metrics (2 charts):
   - Message Count
@@ -134,7 +134,7 @@ These wireframes show the Developer perspective with limited namespace access. D
 ### User Experience
 - **Project selector bar**: Allows namespace/project selection
 - **Breadcrumb navigation**: Shows resource hierarchy
-- **Status badges**: Clear visual indicators (Running, Bound, Pending, etc.)
+- **Status badges**: Clear visual indicators (Running, Provisioned, Pending, etc.)
 - **Tab navigation**: Separates Overview, YAML, and Resources views
 - **Filter/search**: Every list view includes search functionality
 - **Responsive metrics**: Charts use SVG for mock visualizations

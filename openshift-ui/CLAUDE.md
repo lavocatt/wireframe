@@ -54,7 +54,7 @@ This project contains UI wireframes for an OpenShift Console dynamic plugin for 
 
 4. **Status Indicators**
    - Use badges with appropriate colors:
-     - Green: Running, Bound, Created, Approved
+     - Green: Running, Provisioned, Created, Approved
      - Yellow: Pending
      - Red: Error, Failed
    - Format: `<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded border border-green-300">Status</span>`
