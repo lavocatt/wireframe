@@ -64,13 +64,13 @@ This project contains UI wireframes for an OpenShift Console dynamic plugin for 
 ### Current Wireframe Files
 ```
 BrokerService (Cluster Operator):
-├── wireframe-service-creation.html       # Day 1: Create form
+├── wireframe-service-creation.html       # Day 1: Create form (Form View + YAML View toggle)
 ├── wireframe-service-list.html          # Day 2: List view
 ├── wireframe-broker-details-overview.html # Day 2: Details - Overview tab
 └── wireframe-broker-details-resources.html # Day 2: Details - Resources tab
 
 BrokerApp (Developer):
-├── wirefram-app-creation.html           # Day 1: Create form (note: typo in name is intentional)
+├── wirefram-app-creation.html           # Day 1: Create form (Form View + YAML View toggle, note: typo in name)
 ├── wireframe-app-list.html              # Day 2: List view
 ├── wireframe-app-details-overview.html  # Day 2: Details - Overview tab
 └── wireframe-app-details-resources.html # Day 2: Details - Resources tab
@@ -267,6 +267,7 @@ Before completing any wireframe update, verify:
 - [ ] Warning banner is present
 - [ ] Top navigation bar matches other wireframes
 - [ ] **User persona is correct**: `kubeadmin` for BrokerService, `developer` for BrokerApp
+- [ ] **Creation pages have Form View / YAML View toggle** (wireframe-service-creation.html and wirefram-app-creation.html)
 - [ ] Project selector bar is present
 - [ ] Left sidebar navigation is correct for persona (Administrator vs Developer)
 - [ ] **Workloads menu includes both Brokers AND BrokerApps** (both personas can see both, but developers can only create BrokerApps)
@@ -344,6 +345,64 @@ Before completing any wireframe update, verify:
 - CertificateRequest status: Always "Approved" (green badge)
 
 ## Common Patterns
+
+### Form View / YAML View Toggle (Creation Pages)
+Both creation wireframes support switching between Form View and YAML View:
+
+```html
+<!-- Configure Via Radio Buttons -->
+<div class="mb-6">
+    <label class="text-sm font-medium text-gray-900 mb-3 block">Configure Via</label>
+    <div class="flex gap-6">
+        <label class="flex items-center cursor-pointer">
+            <input type="radio" name="configure-via" value="form" checked
+                   class="w-4 h-4 text-pf-blue border-gray-300 focus:ring-pf-blue"
+                   onclick="document.getElementById('form-view').style.display='block'; document.getElementById('yaml-view').style.display='none';">
+            <span class="ml-2 text-sm text-gray-900">Form View</span>
+        </label>
+        <label class="flex items-center cursor-pointer">
+            <input type="radio" name="configure-via" value="yaml"
+                   class="w-4 h-4 text-pf-blue border-gray-300 focus:ring-pf-blue"
+                   onclick="document.getElementById('form-view').style.display='none'; document.getElementById('yaml-view').style.display='block';">
+            <span class="ml-2 text-sm text-gray-900">YAML View</span>
+        </label>
+    </div>
+</div>
+
+<!-- Form View -->
+<div id="form-view">
+    <!-- Form content here -->
+</div>
+
+<!-- YAML View -->
+<div id="yaml-view" style="display: none;">
+    <div class="bg-white border border-gray-200 rounded">
+        <!-- Editor Toolbar -->
+        <div class="border-b border-gray-200 px-4 py-2 flex items-center gap-2 bg-gray-50">
+            <button class="p-1 hover:bg-gray-200 rounded" title="Download">
+                <!-- Download icon SVG -->
+            </button>
+            <button class="p-1 hover:bg-gray-200 rounded" title="Copy">
+                <!-- Copy icon SVG -->
+            </button>
+            <button class="p-1 hover:bg-gray-200 rounded" title="Expand">
+                <!-- Expand icon SVG -->
+            </button>
+            <div class="ml-auto text-xs text-gray-500">
+                <a href="#" class="text-pf-blue hover:underline">Shortcuts</a>
+            </div>
+        </div>
+        <!-- YAML Editor -->
+        <textarea class="w-full font-mono text-sm p-4 bg-white border-0 focus:outline-none focus:ring-0 resize-none"
+                  rows="20" spellcheck="false">
+apiVersion: broker.amq.io/v1beta1
+kind: BrokerService
+# ... YAML content
+        </textarea>
+    </div>
+    <!-- Action buttons -->
+</div>
+```
 
 ### Link Pattern
 ```html

@@ -22,8 +22,9 @@ These wireframes show the Administrator perspective with full cluster access.
 **Purpose**: Day 1 creation form for BrokerService resources
 **Target User**: Cluster operators (kubeadmin)
 **Key Features**:
-- General Details section (Name, Namespace)
-- Infrastructure & Capacity section (Replicas, Storage Size, Memory/RAM, High Availability toggle)
+- **Configure Via** toggle: Switch between Form View and YAML View
+- **Form View**: General Details section (Name, Namespace), Infrastructure & Capacity section (Memory/RAM allocation)
+- **YAML View**: Direct YAML editor with toolbar (download, copy, expand)
 - OpenShift Console styling with project selector bar
 
 #### 2. wireframe-service-list.html
@@ -71,12 +72,15 @@ These wireframes show the Developer perspective with limited namespace access. D
 **Purpose**: Day 1 creation form for BrokerApp resources
 **Target User**: Application developers (developer)
 **Key Features**:
-- Application Details section (Name, Namespace, Application Role for RBAC)
-- Messaging Capabilities section with three subsections:
-  - **Produces To** (blue border): Queues/topics the app will send messages to
-  - **Consumes From** (green border): Queues the app will read from
-  - **Subscribes To** (purple border): Topics the app will subscribe to
-- Dynamic add/remove functionality for messaging addresses
+- **Configure Via** toggle: Switch between Form View and YAML View
+- **Form View**:
+  - Application Details section (Name, Namespace, Application Role for RBAC)
+  - Messaging Capabilities section with three subsections:
+    - **Produces To** (blue border): Queues/topics the app will send messages to
+    - **Consumes From** (green border): Queues the app will read from
+    - **Subscribes To** (purple border): Topics the app will subscribe to
+  - Dynamic add/remove functionality for messaging addresses
+- **YAML View**: Direct YAML editor with toolbar (download, copy, expand)
 - OpenShift Console styling
 
 #### 6. wireframe-app-list.html

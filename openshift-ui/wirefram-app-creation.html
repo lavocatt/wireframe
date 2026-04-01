@@ -182,6 +182,23 @@
                     </p>
                 </div>
 
+                <!-- Configure Via Radio Buttons -->
+                <div class="mb-6">
+                    <label class="text-sm font-medium text-gray-900 mb-3 block">Configure Via</label>
+                    <div class="flex gap-6">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="configure-via" value="form" checked class="w-4 h-4 text-pf-blue border-gray-300 focus:ring-pf-blue" onclick="document.getElementById('form-view').style.display='block'; document.getElementById('yaml-view').style.display='none';">
+                            <span class="ml-2 text-sm text-gray-900">Form View</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="configure-via" value="yaml" class="w-4 h-4 text-pf-blue border-gray-300 focus:ring-pf-blue" onclick="document.getElementById('form-view').style.display='none'; document.getElementById('yaml-view').style.display='block';">
+                            <span class="ml-2 text-sm text-gray-900">YAML View</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Form View -->
+                <div id="form-view">
                 <!-- Form -->
                 <form class="space-y-8">
                     <!-- Section 1: Application Details -->
@@ -421,6 +438,76 @@
                         </button>
                     </div>
                 </form>
+                </div>
+                <!-- End Form View -->
+
+                <!-- YAML View -->
+                <div id="yaml-view" style="display: none;">
+                    <div class="bg-white border border-gray-200 rounded">
+                        <!-- Editor Toolbar -->
+                        <div class="border-b border-gray-200 px-4 py-2 flex items-center gap-2 bg-gray-50">
+                            <button class="p-1 hover:bg-gray-200 rounded" title="Download">
+                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                            </button>
+                            <button class="p-1 hover:bg-gray-200 rounded" title="Copy">
+                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                </svg>
+                            </button>
+                            <button class="p-1 hover:bg-gray-200 rounded" title="Expand">
+                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+                                </svg>
+                            </button>
+                            <div class="ml-auto text-xs text-gray-500">
+                                <a href="#" class="text-pf-blue hover:underline">Shortcuts</a>
+                            </div>
+                        </div>
+                        <!-- YAML Editor -->
+                        <div class="relative">
+                            <textarea
+                                class="w-full font-mono text-sm p-4 bg-white border-0 focus:outline-none focus:ring-0 resize-none"
+                                rows="20"
+                                spellcheck="false"
+                            >apiVersion: broker.amq.io/v1beta1
+kind: BrokerApp
+metadata:
+  name: my-payment-app
+  namespace: my-application
+spec:
+  role: payment-processor
+  capabilities:
+    producesTo:
+      - payment.transactions
+      - payment.confirmations
+    consumesFrom:
+      - payment.requests
+      - payment.refunds
+    subscribesTo:
+      - payment.notifications</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="flex justify-start gap-3 pt-6 pb-8 border-t border-gray-200 mt-8">
+                        <button
+                            type="button"
+                            class="px-4 py-1.5 bg-pf-blue text-white text-sm font-normal rounded hover:bg-pf-blue-hover focus:outline-none transition"
+                        >
+                            Create
+                        </button>
+                        <button
+                            type="button"
+                            class="px-4 py-1.5 bg-white text-gray-700 text-sm font-normal border border-gray-300 rounded hover:bg-gray-50 focus:outline-none transition"
+                            onclick="window.history.back()"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+                <!-- End YAML View -->
             </div>
         </main>
     </div>
