@@ -103,6 +103,7 @@ These wireframes show the Developer perspective with limited namespace access. D
   - Consumer Count
 - Connectivity Tester card with "Run Connectivity Test" button and mock success result showing TLS validation steps
 - Messaging Capabilities section displaying configured addresses (Produces To, Consumes From, Subscribes To)
+- Conditions table showing resource status (Provisioned, CredentialsReady, AddressesCreated, RBACApplied)
 
 #### 8. wireframe-app-details-resources.html
 **Purpose**: Day 2 details page for a BrokerApp (Resources tab)
