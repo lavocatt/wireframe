@@ -278,21 +278,13 @@
                             <!-- Namespace -->
                             <div>
                                 <label for="namespace" class="block text-sm font-medium text-gray-900 mb-2">
-                                    Namespace <span class="text-red-600">*</span>
+                                    Namespace
                                 </label>
-                                <select
-                                    id="namespace"
-                                    name="namespace"
-                                    required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
-                                >
-                                    <option value="">Select a namespace</option>
-                                    <option value="default">default</option>
-                                    <option value="messaging-infra">messaging-infra</option>
-                                    <option value="openshift-operators">openshift-operators</option>
-                                </select>
+                                <div class="w-full px-3 py-2 border border-gray-200 rounded bg-gray-50 text-gray-700">
+                                    messaging-infra
+                                </div>
                                 <p class="mt-1 text-xs text-gray-500">
-                                    Namespace where the broker cluster will be deployed.
+                                    Use the project selector above to change the namespace.
                                 </p>
                             </div>
 
