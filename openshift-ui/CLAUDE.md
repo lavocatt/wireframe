@@ -11,21 +11,41 @@ This project contains UI wireframes for an OpenShift Console dynamic plugin for 
 ### Key Architectural Concepts
 1. **Dual-PKI Architecture**: Separate Control Plane PKI (operator↔broker) and Data Plane PKI (app↔broker)
 2. **cert-manager Integration**: All certificates are provisioned via cert-manager CertificateRequests
-3. **Role-Based Design**: Cluster operators manage infrastructure, developers manage apps
-4. **RBAC for Messaging**: Application roles define authorization for produce/consume/subscribe capabilities
+3. **Simple Label-Based Binding**: BrokerApps use selector labels to find and bind to BrokerServices
 
-### User Personas and Permissions
-- **Cluster Operator** (kubeadmin): Full cluster access, manages BrokerServices
-  - Can view and manage all namespaces
+### Current Scope: Basic CRUD Only
+
+**IMPORTANT**: This is a **simplified MVP implementation**. The following features are **deferred to future phases**:
+
+- ❌ Multi-tenancy (no developer persona)
+- ❌ Namespace-based authorization
+- ❌ Label suggestions via ConfigMaps
+- ❌ Previously used labels via localStorage
+- ❌ Drag-and-drop label selectors
+- ❌ RBAC and approval workflows
+
+**Current implementation**:
+- ✅ Single persona: **kubeadmin only**
+- ✅ Simple text input for labels (key-value pairs)
+- ✅ Basic CRUD operations
+- ✅ Simple metrics integration
+
+### User Persona (Singular)
+- **Cluster Administrator** (kubeadmin): Manages everything
+  - Full cluster access
   - Uses "Administrator" perspective in OpenShift Console
-  - Creates infrastructure resources (StatefulSets, Services, PKI)
+  - Creates both BrokerServices AND BrokerApps
+  - No authorization or isolation needed
 
-- **Developer** (developer): Limited access, manages BrokerApps only
-  - Can only access assigned namespaces/projects
-  - Uses "Developer" perspective in OpenShift Console
-  - Can only create BrokerApps in Workloads section
-  - Cannot create or modify BrokerServices
-  - Cannot access cluster-wide configuration
+## Wireframe Purpose
+
+These wireframes serve as **visual mockups only** to communicate the UI design. They are:
+- Self-contained HTML files (Tailwind CSS only)
+- Static examples with hardcoded data
+- **NOT** interactive prototypes
+- **NOT** production code
+
+The actual implementation will use React + TypeScript + PatternFly 6.
 
 ## Core Design Principles
 
@@ -36,6 +56,7 @@ This project contains UI wireframes for an OpenShift Console dynamic plugin for 
    - Follow Red Hat PatternFly design patterns
    - Maintain consistent color palette (defined in tailwind.config)
    - All wireframes must be self-contained HTML files (no external dependencies except Tailwind)
+   - **Keep it simple**: No complex JavaScript, no drag-and-drop, no ConfigMap loading
 
 2. **Standard Page Structure** (Every wireframe must include)
    ```
@@ -266,49 +287,39 @@ Before completing any wireframe update, verify:
 - [ ] File is self-contained HTML (only Tailwind CDN dependency)
 - [ ] Warning banner is present
 - [ ] Top navigation bar matches other wireframes
-- [ ] **User persona is correct**: `kubeadmin` for BrokerService, `developer` for BrokerApp
-- [ ] **Creation pages have Form View / YAML View toggle** (wireframe-service-creation.html and wirefram-app-creation.html)
-- [ ] Project selector bar is present
-- [ ] Left sidebar navigation is correct for persona (Administrator vs Developer)
-- [ ] **Workloads menu includes both Brokers AND BrokerApps** (both personas can see both, but developers can only create BrokerApps)
-- [ ] **Perspective switcher matches persona**: Administrator icon for BrokerService, Developer icon for BrokerApp
+- [ ] **User is always `kubeadmin`** (no developer persona in current scope)
+- [ ] **Perspective is always Administrator** (shield icon)
+- [ ] **Creation pages have Form View / YAML View toggle**
+- [ ] Project selector bar is present (typically shows `default` namespace)
+- [ ] Left sidebar navigation shows Administrator perspective items
+- [ ] **Workloads menu includes both Brokers AND BrokerApps**
 - [ ] Breadcrumbs are accurate
 - [ ] Tab navigation (if applicable) has correct active state
 - [ ] All links use `text-pf-blue hover:underline`
 - [ ] Status badges use appropriate colors
 - [ ] Tables have consistent column styling
-- [ ] **Resources tables use consistent styling**: bordered container, gray header background, colored icons, status with checkmarks (not badge pills)
+- [ ] **Resources tables use consistent styling**: bordered container, gray header background, colored icons
+- [ ] **Labels use simple text inputs** (NO drag-and-drop, NO ConfigMaps, NO localStorage)
 - [ ] Forms use consistent input styling with focus states
 - [ ] Charts/metrics use the established SVG pattern
 - [ ] Mock data is realistic and consistent across wireframes
 - [ ] No broken HTML or missing closing tags
+- [ ] No complex JavaScript (keep it simple)
 - [ ] Color palette uses custom Tailwind colors (pf-blue, os-dark, etc.)
 
-## CRITICAL: Persona Distinction
+## SIMPLIFIED: Single Persona Only
 
-**Never mix personas in wireframes!** This is one of the most important aspects of this project.
+**Current scope uses ONLY the kubeadmin persona.**
 
-### BrokerService Wireframes (Cluster Operator)
+### All Wireframes (Cluster Administrator)
 - **Username**: `kubeadmin`
 - **Perspective**: Administrator (shield icon)
 - **Permissions**: Full cluster access
-- **Sidebar Navigation**: Shows all cluster resources (StatefulSets, Storage, etc.)
-  - **MUST include both Brokers AND BrokerApps** in the Workloads menu
-- **Files**: All wireframes with `service` or `broker-details` in the name
+- **Sidebar Navigation**: Shows all cluster resources
+- **Can create**: Both BrokerServices AND BrokerApps
+- **Namespace**: Typically `default`
 
-### BrokerApp Wireframes (Developer)
-- **Username**: `developer`
-- **Perspective**: Developer (code brackets icon)
-- **Permissions**: Limited to namespace/project, can only create BrokerApps in Workloads
-- **Sidebar Navigation**: Shows only developer-accessible resources (limited view)
-- **Files**: All wireframes with `app` in the name (wirefram-app-*, wireframe-app-*)
-
-### When Creating/Updating Wireframes
-1. **Always check which persona the wireframe is for**
-2. **Set the correct username** in the top navigation dropdown
-3. **Use the correct perspective icon** in the sidebar
-4. **Show appropriate navigation items** based on permissions
-5. **Never show cluster-admin features** in developer wireframes
+**Future**: Developer persona and multi-tenancy features are deferred.
 
 ## Important Conventions to Remember
 
@@ -426,40 +437,77 @@ kind: BrokerService
 </div>
 ```
 
-### Labels Selector Pattern (Creation Forms)
-Both BrokerService and BrokerApp creation forms include a labels/selector interface with drag-and-drop functionality and multiple label sources:
+### Labels Input Pattern (Creation Forms) - SIMPLIFIED
 
-**BrokerService**: Labels that identify the service
+**IMPORTANT**: The complex drag-and-drop and ConfigMap-based label suggestions have been **removed**. 
+
+Both BrokerService and BrokerApp creation forms now use **simple text inputs** for labels:
+
+**BrokerService**: Labels that identify the service  
 **BrokerApp**: Selector matchLabels that find the service
 
-#### Label Sources
+#### Current Implementation (Simplified)
 
-The creation forms present three sources of labels:
+**No ConfigMaps, no localStorage, no drag-and-drop.**
 
-1. **Available Labels** (gray badges): Sourced from `artemis-label-suggestions` ConfigMap in the current namespace
-2. **Previously Used Labels** (purple badges): Sourced from browser localStorage (user's label history)
-3. **Custom Label Input**: Free-form text field for ad-hoc labels
+Simple key-value pair inputs:
+- User types key in first input field
+- User types value in second input field
+- Click "Add Label" button to add another row
+- Click X button to remove a label row
 
 #### Implementation Details
 
-**Available Labels ConfigMap**:
-- The OpenShift Console dynamic plugin reads the ConfigMap named `artemis-label-suggestions` from the **current namespace**
-- Cluster administrators create this ConfigMap during namespace provisioning as part of the namespace setup
-- This allows different namespaces to have different suggested labels (e.g., dev vs prod environments)
-- ConfigMap format (example):
-  ```yaml
-  apiVersion: v1
-  kind: ConfigMap
-  metadata:
-    name: artemis-label-suggestions
-    namespace: my-application
-  data:
-    labels: |
-      - forWorkQueue: "true"
-      - forEventStreaming: "true"
-      - tier: "production"
-      - region: "us-east"
-  ```
+**Namespace-Based Authorization**:
+
+The operator uses namespace labels to control which BrokerApps can bind to which BrokerServices:
+
+- **BrokerService namespaces** with labels prefixed `arkmq.org/app.filter/*` are **restricted**
+  - Example: `arkmq.org/app.filter/env: "production"`, `arkmq.org/app.filter/team: "payments"`
+  - Only BrokerApps from namespaces with matching labels (without the prefix) can bind
+  - Operator creates `artemis-label-suggestions` ConfigMap in authorized namespaces only
+
+- **BrokerService namespaces** without filter labels are **open to all**
+  - Any namespace can bind to these services
+  - Operator aggregates labels into global ConfigMap: `artemis-label-suggestions-global` in `artemis-system` namespace
+
+**Available Labels ConfigMap (Dual-Source)**:
+
+For **BrokerService creation**:
+- Reads from `artemis-label-suggestions` in current namespace (operator-managed)
+
+For **BrokerApp creation**:
+- Reads from TWO sources:
+  1. `artemis-label-suggestions` in current namespace (restricted services you're authorized for)
+  2. `artemis-label-suggestions-global` in `artemis-system` namespace (open services)
+- Merges and deduplicates labels from both sources
+
+ConfigMap format (example):
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: artemis-label-suggestions
+  namespace: my-application
+  annotations:
+    artemis.io/managed-by: "prod-broker,analytics-broker"  # Operator-managed
+data:
+  labels: |
+    - forWorkQueue: "true"
+    - forEventStreaming: "true"
+    - tier: "production"
+    - region: "us-east"
+```
+
+**Authorization Flow**:
+1. Admin labels BrokerService namespace with `arkmq.org/app.filter/*` (or leaves it open)
+2. Operator reconciles:
+   - If filter labels present: finds matching app namespaces, creates ConfigMaps there
+   - If no filter labels: updates global ConfigMap with service labels
+3. Developer sees only labels for services they're authorized to use
+4. BrokerApp tries to bind via matchLabels
+5. Operator validates: does app namespace match service's filter requirements?
+6. If authorized: provision. If not: silent rejection with generic "ServiceNotFound" error (404, not 403)
 
 **Previously Used Labels**:
 - Stored in browser localStorage as JSON array
@@ -469,14 +517,26 @@ The creation forms present three sources of labels:
 **HTML Pattern**:
 
 ```html
-<!-- Info Box explaining ConfigMap mechanism -->
+<!-- Info Box for BrokerService Creation -->
 <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
     <div class="flex items-start">
         <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
         </svg>
         <div class="flex-1 text-xs text-blue-800">
-            <strong>For cluster administrators:</strong> The "Available Labels" section is populated from a ConfigMap named <code class="bg-blue-100 px-1 rounded">artemis-label-suggestions</code> in the current namespace. Create this ConfigMap during namespace provisioning to provide developers with standardized label options.
+            <strong>Authorization:</strong> BrokerApps can only bind to this service if their namespace is authorized. To restrict access, label this namespace with <code class="bg-blue-100 px-1 rounded">arkmq.org/app.filter/*</code> keys (e.g., <code class="bg-blue-100 px-1 rounded">arkmq.org/app.filter/env: "production"</code>). The operator will automatically create label suggestions in authorized namespaces. If no filter labels are present, this service is open to all namespaces.
+        </div>
+    </div>
+</div>
+
+<!-- Info Box for BrokerApp Creation -->
+<div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+    <div class="flex items-start">
+        <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+        <div class="flex-1 text-xs text-blue-800">
+            <strong>Available Labels:</strong> Labels are loaded from two sources: (1) <code class="bg-blue-100 px-1 rounded">artemis-label-suggestions</code> ConfigMap in this namespace (restricted services you're authorized to use), and (2) <code class="bg-blue-100 px-1 rounded">artemis-label-suggestions-global</code> in <code class="bg-blue-100 px-1 rounded">artemis-system</code> namespace (open services available to all). The operator manages these ConfigMaps automatically based on namespace authorization rules.
         </div>
     </div>
 </div>

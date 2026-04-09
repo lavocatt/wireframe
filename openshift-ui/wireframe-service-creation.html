@@ -30,70 +30,6 @@
             overflow-x: hidden;
         }
     </style>
-    <script>
-        // Drag and drop functionality for labels
-        function allowDrop(ev) {
-            ev.preventDefault();
-        }
-
-        function drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.dataset.label);
-        }
-
-        function drop(ev) {
-            ev.preventDefault();
-            const labelText = ev.dataTransfer.getData("text");
-            addSelectedLabel(labelText);
-        }
-
-        function addSelectedLabel(labelText) {
-            const selectedContainer = document.getElementById('selected-labels');
-
-            // Check if label already exists
-            const existingLabels = selectedContainer.querySelectorAll('.selected-label-badge');
-            for (let badge of existingLabels) {
-                if (badge.dataset.label === labelText) {
-                    return; // Label already selected
-                }
-            }
-
-            // Create new badge
-            const badge = document.createElement('span');
-            badge.className = 'selected-label-badge inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-800 text-sm rounded border border-blue-300';
-            badge.dataset.label = labelText;
-            badge.innerHTML = `
-                ${labelText}
-                <button onclick="removeLabel(this)" class="ml-2 text-blue-600 hover:text-blue-800" title="Remove" type="button">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            `;
-            selectedContainer.appendChild(badge);
-        }
-
-        function removeLabel(button) {
-            button.parentElement.remove();
-        }
-
-        function addCustomLabel() {
-            const input = document.getElementById('custom-label-input');
-            const labelText = input.value.trim();
-
-            if (labelText) {
-                addSelectedLabel(labelText);
-                input.value = '';
-            }
-        }
-
-        // Allow Enter key to add custom label
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                addCustomLabel();
-            }
-        }
-    </script>
 </head>
 <body class="bg-pf-gray font-sans h-screen overflow-hidden">
     <!-- Warning Banner -->
@@ -294,110 +230,68 @@
                                     Labels
                                 </label>
                                 <p class="text-xs text-gray-500 mb-3">
-                                    Select labels that BrokerApps must use to discover and bind to this service.
+                                    Add labels that BrokerApps can use to discover and bind to this service.
                                 </p>
 
-                                <!-- Info Box -->
-                                <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
-                                    <div class="flex items-start">
-                                        <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <div class="flex-1 text-xs text-blue-800">
-                                            <strong>For cluster administrators:</strong> The "Available Labels" section is populated from a ConfigMap named <code class="bg-blue-100 px-1 rounded">artemis-label-suggestions</code> in the current namespace. Create this ConfigMap during namespace provisioning to provide developers with standardized label options.
+                                <!-- Label Input -->
+                                <div class="space-y-3">
+                                    <!-- Existing labels -->
+                                    <div class="space-y-2">
+                                        <!-- Label 1 -->
+                                        <div class="flex gap-2 items-center">
+                                            <input
+                                                type="text"
+                                                placeholder="Key (e.g., tier)"
+                                                value="tier"
+                                                class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                            />
+                                            <span class="text-gray-500">=</span>
+                                            <input
+                                                type="text"
+                                                placeholder="Value (e.g., production)"
+                                                value="production"
+                                                class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                            />
+                                            <button type="button" class="text-red-600 hover:text-red-800 p-1" title="Remove">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+
+                                        <!-- Label 2 -->
+                                        <div class="flex gap-2 items-center">
+                                            <input
+                                                type="text"
+                                                placeholder="Key"
+                                                value="forWorkQueue"
+                                                class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                            />
+                                            <span class="text-gray-500">=</span>
+                                            <input
+                                                type="text"
+                                                placeholder="Value"
+                                                value="true"
+                                                class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                            />
+                                            <button type="button" class="text-red-600 hover:text-red-800 p-1" title="Remove">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Available Labels (drag source) -->
-                                <div class="mb-3">
-                                    <div class="flex items-center gap-1 mb-2">
-                                        <span class="text-xs font-medium text-gray-700">Available Labels</span>
-                                        <svg class="w-3 h-3 text-gray-500 cursor-help" fill="currentColor" viewBox="0 0 20 20" title="Sourced from artemis-label-suggestions ConfigMap in current namespace">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                    <!-- Add label button -->
+                                    <button
+                                        type="button"
+                                        class="inline-flex items-center px-3 py-2 text-sm text-pf-blue border border-pf-blue rounded hover:bg-blue-50 focus:outline-none"
+                                    >
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                                         </svg>
-                                    </div>
-                                    <div class="mt-2 flex flex-wrap gap-2">
-                                        <span draggable="true" ondragstart="drag(event)" data-label='forWorkQueue: "true"' class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 cursor-move hover:bg-gray-200">
-                                            <svg class="w-3 h-3 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
-                                            </svg>
-                                            forWorkQueue: "true"
-                                        </span>
-                                        <span draggable="true" ondragstart="drag(event)" data-label='forEventStreaming: "true"' class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 cursor-move hover:bg-gray-200">
-                                            <svg class="w-3 h-3 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
-                                            </svg>
-                                            forEventStreaming: "true"
-                                        </span>
-                                        <span draggable="true" ondragstart="drag(event)" data-label='tier: "production"' class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 cursor-move hover:bg-gray-200">
-                                            <svg class="w-3 h-3 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
-                                            </svg>
-                                            tier: "production"
-                                        </span>
-                                        <span draggable="true" ondragstart="drag(event)" data-label='region: "us-east"' class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 cursor-move hover:bg-gray-200">
-                                            <svg class="w-3 h-3 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
-                                            </svg>
-                                            region: "us-east"
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- Previously Used Labels (drag source) -->
-                                <div class="mb-3">
-                                    <div class="flex items-center gap-1 mb-2">
-                                        <span class="text-xs font-medium text-gray-700">Previously Used Labels</span>
-                                        <svg class="w-3 h-3 text-gray-500 cursor-help" fill="currentColor" viewBox="0 0 20 20" title="Labels you've used in previous BrokerService resources (from browser history)">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                                        </svg>
-                                    </div>
-                                    <div class="mt-2 flex flex-wrap gap-2">
-                                        <span draggable="true" ondragstart="drag(event)" data-label='env: "staging"' class="inline-flex items-center px-3 py-1.5 bg-purple-50 text-purple-700 text-sm rounded border border-purple-200 cursor-move hover:bg-purple-100">
-                                            <svg class="w-3 h-3 mr-1.5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
-                                            </svg>
-                                            env: "staging"
-                                        </span>
-                                        <span draggable="true" ondragstart="drag(event)" data-label='team: "payments"' class="inline-flex items-center px-3 py-1.5 bg-purple-50 text-purple-700 text-sm rounded border border-purple-200 cursor-move hover:bg-purple-100">
-                                            <svg class="w-3 h-3 mr-1.5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
-                                            </svg>
-                                            team: "payments"
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- Custom Label Input -->
-                                <div class="mb-3">
-                                    <span class="text-xs font-medium text-gray-700">Add Custom Label</span>
-                                    <div class="mt-2 flex gap-2">
-                                        <input
-                                            type="text"
-                                            id="custom-label-input"
-                                            onkeypress="handleKeyPress(event)"
-                                            placeholder='e.g., environment: "staging"'
-                                            class="flex-1 px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
-                                        />
-                                        <button
-                                            type="button"
-                                            onclick="addCustomLabel()"
-                                            class="inline-flex items-center px-3 py-1.5 bg-pf-blue text-white text-sm rounded hover:bg-pf-blue-hover focus:outline-none"
-                                        >
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Selected Labels (drop target) -->
-                                <div ondrop="drop(event)" ondragover="allowDrop(event)" class="border-2 border-dashed border-gray-300 rounded p-3 bg-gray-50 min-h-[80px] hover:border-pf-blue hover:bg-blue-50">
-                                    <span class="text-xs font-medium text-gray-700">Selected Labels (drag here)</span>
-                                    <div id="selected-labels" class="mt-2 flex flex-wrap gap-2">
-                                        <!-- Labels will be added here dynamically -->
-                                    </div>
+                                        Add Label
+                                    </button>
                                 </div>
                             </div>
                         </div>

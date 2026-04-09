@@ -8,18 +8,33 @@ The ActiveMQ Artemis Operator uses a split-CRD design:
 - **BrokerService**: Managed by cluster operators (kubeadmin), defines the messaging infrastructure (broker cluster, storage, HA, PKI)
 - **BrokerApp**: Managed by application developers (developer), defines application messaging intent and binds to a BrokerService
 
-### Label-Based Service Discovery
-BrokerApps discover and bind to BrokerServices using Kubernetes label selectors:
+### Label-Based Service Discovery with Namespace Authorization
+
+BrokerApps discover and bind to BrokerServices using Kubernetes label selectors with built-in authorization:
+
+**Service Discovery**:
 - **BrokerService** resources are labeled (e.g., `forWorkQueue: "true"`, `tier: "production"`)
 - **BrokerApp** resources use `selector.matchLabels` to find compatible BrokerServices
-- The operator provisions the app to any BrokerService matching the label criteria
+- The operator provisions the app to any BrokerService matching the label criteria AND passing authorization checks
 - This allows flexible, multi-tenant messaging infrastructure with automated service binding
 
+**Namespace-Based Authorization**:
+- **Restricted Services**: BrokerService namespace has labels with `arkmq.org/app.filter/*` prefix
+  - Example: `arkmq.org/app.filter/env: "production"`, `arkmq.org/app.filter/team: "payments"`
+  - Only BrokerApps from namespaces with matching labels (without prefix) can bind
+  - Operator creates `artemis-label-suggestions` ConfigMap in authorized namespaces
+- **Open Services**: BrokerService namespace has NO filter labels
+  - Any namespace can bind to these services
+  - Operator aggregates labels into `artemis-label-suggestions-global` in `artemis-system` namespace
+- **Security**: Unauthorized binding attempts receive generic "ServiceNotFound" error (404, not 403)
+
 **Label Suggestions in UI**:
-- The creation forms offer three label sources: **Available Labels** (from `artemis-label-suggestions` ConfigMap), **Previously Used Labels** (from browser history), and custom input
-- Cluster administrators create the `artemis-label-suggestions` ConfigMap in each namespace during provisioning
-- This allows different namespaces to have different suggested labels (e.g., dev vs prod environments)
-- Falls back to custom input if ConfigMap doesn't exist
+- The creation forms offer three label sources: **Available Labels** (from ConfigMaps), **Previously Used Labels** (from browser history), and custom input
+- **BrokerApp creation** loads labels from TWO ConfigMaps:
+  1. `artemis-label-suggestions` in current namespace (restricted services you're authorized for)
+  2. `artemis-label-suggestions-global` in `artemis-system` namespace (open services)
+- **Operator-managed**: ConfigMaps are automatically created/updated based on namespace authorization rules
+- Developers only see labels for services they're allowed to use
 
 ### User Personas
 - **Cluster Operator** (kubeadmin): Full cluster access via Administrator perspective, manages BrokerServices
