@@ -338,23 +338,50 @@
                                     </button>
                                 </div>
 
-                                <!-- List of Added Addresses -->
+                                <!-- List of Added Addresses (with pubSub options) -->
                                 <div class="space-y-2">
-                                    <div class="flex items-center justify-between bg-white px-3 py-2 rounded border border-gray-200">
-                                        <span class="text-sm text-gray-900 font-mono">orders.created</span>
-                                        <button type="button" class="text-red-600 hover:text-red-800">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                        </button>
+                                    <div class="bg-white rounded border border-gray-200">
+                                        <div class="flex items-center justify-between px-3 py-2">
+                                            <span class="text-sm text-gray-900 font-mono">orders.created</span>
+                                            <div class="flex items-center gap-2">
+                                                <label class="flex items-center gap-1 text-xs text-gray-600">
+                                                    <input type="checkbox" class="w-3.5 h-3.5 text-pf-blue rounded border-gray-300">
+                                                    PubSub
+                                                </label>
+                                                <button type="button" class="text-red-600 hover:text-red-800">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex items-center justify-between bg-white px-3 py-2 rounded border border-gray-200">
-                                        <span class="text-sm text-gray-900 font-mono">orders.updated</span>
-                                        <button type="button" class="text-red-600 hover:text-red-800">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                        </button>
+                                    <div class="bg-white rounded border border-gray-200">
+                                        <div class="flex items-center justify-between px-3 py-2">
+                                            <span class="text-sm text-gray-900 font-mono">orders.updated</span>
+                                            <div class="flex items-center gap-2">
+                                                <label class="flex items-center gap-1 text-xs text-gray-600">
+                                                    <input type="checkbox" class="w-3.5 h-3.5 text-pf-blue rounded border-gray-300" checked>
+                                                    PubSub
+                                                </label>
+                                                <button type="button" class="text-red-600 hover:text-red-800">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Expanded pubSub options (shown when checked) -->
+                                        <div class="border-t border-gray-100 px-3 py-2 bg-gray-50">
+                                            <label class="block text-xs font-medium text-gray-600 mb-1">Subscriptions</label>
+                                            <div class="flex gap-2 items-center">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-800">
+                                                    client1.sub1
+                                                    <button class="ml-1 text-blue-600 hover:text-blue-800">&times;</button>
+                                                </span>
+                                                <input type="text" placeholder="Add subscription..." class="flex-1 px-2 py-1 border border-gray-300 rounded text-xs">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -387,20 +414,160 @@
                                     </button>
                                 </div>
 
-                                <!-- List of Added Addresses -->
+                                <!-- List of Added Addresses (with pubSub options) -->
                                 <div class="space-y-2">
-                                    <div class="flex items-center justify-between bg-white px-3 py-2 rounded border border-gray-200">
-                                        <span class="text-sm text-gray-900 font-mono">payments.pending</span>
-                                        <button type="button" class="text-red-600 hover:text-red-800">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                        </button>
+                                    <div class="bg-white rounded border border-gray-200">
+                                        <div class="flex items-center justify-between px-3 py-2">
+                                            <span class="text-sm text-gray-900 font-mono">payments.pending</span>
+                                            <div class="flex items-center gap-2">
+                                                <label class="flex items-center gap-1 text-xs text-gray-600">
+                                                    <input type="checkbox" class="w-3.5 h-3.5 text-pf-blue rounded border-gray-300">
+                                                    PubSub
+                                                </label>
+                                                <button type="button" class="text-red-600 hover:text-red-800">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                         </div>
+                    </div>
+
+                    <!-- Section 3: Addresses -->
+                    <div class="bg-white border-t border-gray-200 pt-6">
+                        <h2 class="text-lg font-medium text-gray-900 mb-2">Addresses</h2>
+                        <p class="text-sm text-gray-600 mb-6">
+                            Declare addresses owned by this app. Private addresses are exclusive to this app; shared addresses can be referenced by other apps.
+                        </p>
+
+                        <div class="space-y-6">
+                            <!-- Private Addresses -->
+                            <div class="border-l-4 border-gray-400 pl-4 py-2 bg-gray-50">
+                                <h3 class="text-base font-semibold text-gray-900 mb-3 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                    </svg>
+                                    Private Addresses
+                                </h3>
+                                <p class="text-xs text-gray-600 mb-3">
+                                    Addresses exclusive to this app. Other apps cannot reference these addresses.
+                                </p>
+
+                                <div class="flex gap-2 mb-3">
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., internal.state"
+                                        class="flex-1 px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue text-sm"
+                                    />
+                                    <button
+                                        type="button"
+                                        class="px-4 py-2 bg-pf-blue text-white text-sm font-medium rounded shadow hover:bg-pf-blue-hover focus:outline-none focus:ring-2 focus:ring-pf-blue"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <div class="bg-white rounded border border-gray-200">
+                                        <div class="flex items-center justify-between px-3 py-2">
+                                            <span class="text-sm text-gray-900 font-mono">internal.state</span>
+                                            <div class="flex items-center gap-2">
+                                                <label class="flex items-center gap-1 text-xs text-gray-600">
+                                                    <input type="checkbox" class="w-3.5 h-3.5 text-pf-blue rounded border-gray-300">
+                                                    PubSub
+                                                </label>
+                                                <button type="button" class="text-red-600 hover:text-red-800">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Shared Addresses -->
+                            <div class="border-l-4 border-yellow-500 pl-4 py-2 bg-yellow-50">
+                                <h3 class="text-base font-semibold text-gray-900 mb-3 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                                    </svg>
+                                    Shared Addresses
+                                </h3>
+                                <p class="text-xs text-gray-600 mb-3">
+                                    Addresses that other apps can reference via <code class="bg-yellow-100 px-1 rounded">appNamespace/appName</code> in their capabilities. Use for cross-app messaging patterns.
+                                </p>
+
+                                <div class="flex gap-2 mb-3">
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., orders.public"
+                                        class="flex-1 px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue text-sm"
+                                    />
+                                    <button
+                                        type="button"
+                                        class="px-4 py-2 bg-pf-blue text-white text-sm font-medium rounded shadow hover:bg-pf-blue-hover focus:outline-none focus:ring-2 focus:ring-pf-blue"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <div class="bg-white rounded border border-gray-200">
+                                        <div class="flex items-center justify-between px-3 py-2">
+                                            <span class="text-sm text-gray-900 font-mono">orders.public</span>
+                                            <div class="flex items-center gap-2">
+                                                <label class="flex items-center gap-1 text-xs text-gray-600">
+                                                    <input type="checkbox" class="w-3.5 h-3.5 text-pf-blue rounded border-gray-300" checked>
+                                                    PubSub
+                                                </label>
+                                                <button type="button" class="text-red-600 hover:text-red-800">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Resources -->
+                    <div class="bg-white border-t border-gray-200 pt-6">
+                        <h2 class="text-lg font-medium text-gray-900 mb-6">Resources</h2>
+                        <div class="grid grid-cols-2 gap-6">
+                            <!-- CPU Request -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">CPU Request</label>
+                                <input type="text" placeholder="e.g., 250m" class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue text-sm" />
+                            </div>
+                            <!-- CPU Limit -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">CPU Limit</label>
+                                <input type="text" placeholder="e.g., 500m" class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue text-sm" />
+                            </div>
+                            <!-- Memory Request -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">Memory Request</label>
+                                <input type="text" placeholder="e.g., 256Mi" class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue text-sm" />
+                            </div>
+                            <!-- Memory Limit -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">Memory Limit</label>
+                                <input type="text" placeholder="e.g., 512Mi" class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue text-sm" />
+                            </div>
+                        </div>
+                        <p class="mt-2 text-xs text-gray-500">
+                            Kubernetes resource requests and limits for the broker allocation. Use standard quantity format (e.g., 500m, 2Gi).
+                        </p>
                     </div>
 
                     <!-- Action Bar -->
@@ -462,11 +629,27 @@ spec:
   selector:
     matchLabels:
       forWorkQueue: "true"
+  addresses:
+  - address: "internal.state"
+  sharedAddresses:
+  - address: "orders.public"
+    pubSub: true
   capabilities:
   - producerOf:
     - address: "APP.JOBS"
+    - address: "orders.updated"
+      pubSub: true
+      subscriptions:
+      - "client1.sub1"
   - consumerOf:
-    - address: "APP.JOBS"</textarea>
+    - address: "APP.JOBS"
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"</textarea>
                         </div>
                     </div>
 
