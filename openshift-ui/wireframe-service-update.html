@@ -222,6 +222,59 @@
                                     Add labels that BrokerApps can use to discover and bind to this service.
                                 </p>
 
+                                <!-- Link to open copy-labels modal -->
+                                <div class="mb-4">
+                                    <a href="#" class="text-sm text-pf-blue hover:underline" onclick="document.getElementById('copy-labels-modal').style.display='flex'; return false;">
+                                        Copy labels from existing service
+                                    </a>
+                                    <span class="text-xs text-gray-500 ml-2">So apps targeting it will also discover this one</span>
+                                </div>
+
+                                <!-- Copy labels modal (hidden by default) -->
+                                <div id="copy-labels-modal" class="fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50" style="display: none;">
+                                    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col">
+                                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                                            <h3 class="text-lg font-medium text-gray-900">Copy labels from existing service</h3>
+                                            <button type="button" class="text-gray-400 hover:text-gray-600" onclick="document.getElementById('copy-labels-modal').style.display='none';">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <p class="px-6 pt-3 text-sm text-gray-600">Select a service to copy its labels. Apps already targeting that service will also discover yours.</p>
+                                        <div class="px-6 py-4 overflow-y-auto flex-1">
+                                            <div class="grid grid-cols-1 gap-3">
+                                                <div class="border border-gray-200 rounded-lg p-4 hover:border-pf-blue hover:shadow cursor-pointer transition">
+                                                    <div class="text-sm text-gray-900 font-medium mb-2">prod-work-queue-service</div>
+                                                    <div class="flex items-center flex-wrap gap-1.5">
+                                                        <span class="inline-flex items-center px-2.5 py-1 rounded text-xs bg-gray-100 text-gray-800 font-mono">tier=production</span>
+                                                        <span class="inline-flex items-center px-2.5 py-1 rounded text-xs bg-gray-100 text-gray-800 font-mono">forWorkQueue=true</span>
+                                                    </div>
+                                                </div>
+                                                <div class="border border-gray-200 rounded-lg p-4 hover:border-pf-blue hover:shadow cursor-pointer transition">
+                                                    <div class="text-sm text-gray-900 font-medium mb-2">prod-event-streaming-service</div>
+                                                    <div class="flex items-center flex-wrap gap-1.5">
+                                                        <span class="inline-flex items-center px-2.5 py-1 rounded text-xs bg-gray-100 text-gray-800 font-mono">tier=production</span>
+                                                        <span class="inline-flex items-center px-2.5 py-1 rounded text-xs bg-gray-100 text-gray-800 font-mono">forEventStreaming=true</span>
+                                                    </div>
+                                                </div>
+                                                <div class="border border-gray-200 rounded-lg p-4 hover:border-pf-blue hover:shadow cursor-pointer transition">
+                                                    <div class="text-sm text-gray-900 font-medium mb-2">staging-broker</div>
+                                                    <div class="flex items-center flex-wrap gap-1.5">
+                                                        <span class="inline-flex items-center px-2.5 py-1 rounded text-xs bg-gray-100 text-gray-800 font-mono">tier=staging</span>
+                                                        <span class="inline-flex items-center px-2.5 py-1 rounded text-xs bg-gray-100 text-gray-800 font-mono">forWorkQueue=true</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="px-6 py-3 border-t border-gray-200 flex justify-end">
+                                            <button type="button" class="px-4 py-1.5 text-sm text-gray-700 border border-gray-300 rounded hover:bg-gray-50" onclick="document.getElementById('copy-labels-modal').style.display='none';">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="space-y-3">
                                     <div class="space-y-2">
                                         <!-- Label 1 -->
