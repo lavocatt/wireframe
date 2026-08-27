@@ -229,6 +229,9 @@
                                     Name
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600">
+                                    Namespace
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600">
                                     Status
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600">
@@ -243,6 +246,11 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600">
                                     Consumer Count
                                 </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600">
+                                    Created
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-600">
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="bg-white">
@@ -252,6 +260,9 @@
                                     <a href="#" class="text-pf-blue hover:underline">
                                         order-processor-app
                                     </a>
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <a href="#" class="text-pf-blue hover:underline text-sm">my-application</a>
                                 </td>
                                 <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">
                                     Provisioned
@@ -280,6 +291,18 @@
                                 <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">
                                     5
                                 </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
+                                    Aug 12, 2026
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-right">
+                                    <div class="relative inline-block">
+                                        <button class="p-1 hover:bg-gray-100 rounded" title="Actions">
+                                            <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
 
                             <!-- Row 2 -->
@@ -288,6 +311,9 @@
                                     <a href="#" class="text-pf-blue hover:underline">
                                         notification-service
                                     </a>
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <a href="#" class="text-pf-blue hover:underline text-sm">my-application</a>
                                 </td>
                                 <td class="px-6 py-3 whitespace-nowrap text-sm text-yellow-600">
                                     Pending
@@ -308,6 +334,18 @@
                                 <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-400">
                                     —
                                 </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
+                                    Aug 18, 2026
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-right">
+                                    <div class="relative inline-block">
+                                        <button class="p-1 hover:bg-gray-100 rounded" title="Actions">
+                                            <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
 
                             <!-- Row 3 -->
@@ -316,6 +354,9 @@
                                     <a href="#" class="text-pf-blue hover:underline">
                                         payment-gateway
                                     </a>
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap">
+                                    <a href="#" class="text-pf-blue hover:underline text-sm">my-application</a>
                                 </td>
                                 <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">
                                     Provisioned
@@ -338,9 +379,45 @@
                                 <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">
                                     3
                                 </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
+                                    Aug 22, 2026
+                                </td>
+                                <td class="px-6 py-3 whitespace-nowrap text-right">
+                                    <div class="relative inline-block">
+                                        <button class="p-1 hover:bg-gray-100 rounded" title="Actions">
+                                            <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between px-4 py-3 border-t border-gray-200">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-700">1 - 3 of 3</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-600">Items per page:</span>
+                        <select class="px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option selected>10</option>
+                            <option>20</option>
+                            <option>50</option>
+                            <option>100</option>
+                        </select>
+                        <div class="flex gap-1 ml-4">
+                            <button class="p-1 border border-gray-300 rounded text-gray-400 cursor-not-allowed" disabled>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            </button>
+                            <button class="p-1 border border-gray-300 rounded text-gray-400 cursor-not-allowed" disabled>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
