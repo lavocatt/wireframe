@@ -1,0 +1,15 @@
+Issue Type,Summary,Description,Priority,Parent,Component/s,Labels,Original Estimate,Assignee
+Epic,Infrastructure & Setup,"Set up development infrastructure including certificate management, Prometheus monitoring, and plugin navigation integration. This epic covers all foundational work needed before UI development can begin.",High,,self-provisioning-ui,phase-1,,
+Story,Certificate Management Setup,"As a DevOps engineer, I want to generate all required PKI certificates for broker communication, so that BrokerServices and BrokerApps can communicate securely.
+
+*Acceptance Criteria:*
+- Certificate generation script exists and is documented
+- Control Plane PKI certificates are generated (broker-cert, operator-manager-ca)
+- All certificates are stored as Kubernetes Secrets",High,Infrastructure & Setup,self-provisioning-ui,phase-1,,
+Task,Certificate Generation Script,"*What:* Script to generate all PKI certificates needed for broker communication
+
+*Deliverables:*
+- Script file with inline comments
+- Test: Run script and verify all secrets are created
+
+*Wireframe:* N/A",High,Certificate Management Setup,self-provisioning-ui,phase-1,4d,

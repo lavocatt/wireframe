@@ -1,0 +1,413 @@
+Issue ID,Issue Type,Summary,Description,Priority,Parent ID,Component/s,Labels,Original Estimate
+EPIC-1,Epic,Infrastructure & Setup,"Set up development infrastructure including certificate management, Prometheus monitoring, and plugin navigation integration. This epic covers all foundational work needed before UI development can begin.",High,,self-provisioning-ui,phase-1,
+STORY-1,Story,Certificate Management Setup,"As a DevOps engineer, I want to generate all required PKI certificates for broker communication, so that BrokerServices and BrokerApps can communicate securely.
+
+*Acceptance Criteria:*
+- Certificate generation script exists and is documented
+- Control Plane PKI certificates are generated (broker-cert, operator-manager-ca)
+- Data Plane PKI certificates are generated (data-plane-broker-cert, data-plane-ca)
+- App certificates are generated per application
+- All certificates are stored as Kubernetes Secrets
+- Script usage is documented in README",High,EPIC-1,self-provisioning-ui,phase-1,
+TASK-1,Sub-task,Certificate Generation Script,"*What:* Script to generate all PKI certificates needed for broker communication
+
+*Why:* Operator doesn't handle cert-manager yet, so we need a workaround
+
+*Deliverables:*
+- Script file with inline comments
+- README section explaining usage
+- Example invocation in docs
+- Test: Run script and verify all secrets are created
+- Test: Verify certificates have correct fields (CN, SAN, etc.)
+- Test: Use generated certificates to connect broker and app
+
+*Wireframe:* N/A",High,STORY-1,self-provisioning-ui,phase-1,4d
+STORY-2,Story,Monitoring & Metrics Setup,"As a DevOps engineer, I want to configure Prometheus to scrape broker metrics, so that the UI can display performance data.
+
+*Acceptance Criteria:*
+- Prometheus user workload monitoring is enabled
+- ServiceMonitor is configured for broker pods
+- TLS is configured using Data Plane CA
+- Sample queries return data
+- Metrics appear in OpenShift Console monitoring UI",High,EPIC-1,self-provisioning-ui,phase-1,
+TASK-2,Sub-task,Enable Prometheus Monitoring,"*What:* Enable Prometheus user workload monitoring in OpenShift
+
+*Deliverables:*
+- Script or doc with exact commands
+- Verification steps documented
+- Test: Verify user workload monitoring pods are running
+- Test: Confirm Prometheus is accessible
+
+*Wireframe:* N/A",High,STORY-2,self-provisioning-ui,phase-1,1d
+TASK-3,Sub-task,Configure ServiceMonitor,"*What:* Configure Prometheus to scrape broker metrics
+
+*Dependencies:* Certificate Generation Script, Enable Prometheus Monitoring
+
+*Deliverables:*
+- scripts/setup-servicemonitor.sh
+- ServiceMonitor template YAML
+- Test query examples documented
+- Test: Verify ServiceMonitor is created and active
+- Test: Run sample queries and verify data is returned
+- Test: Verify metrics appear in OpenShift Console monitoring UI
+
+*Wireframe:* N/A",High,STORY-2,self-provisioning-ui,phase-1,3d
+EPIC-2,Epic,BrokerService Management,"Provide UI for cluster administrators to create, list, and view BrokerService resources. BrokerServices represent messaging infrastructure (clusters, storage, PKI) managed by operators.",High,,self-provisioning-ui,"phase-2,phase-3",
+STORY-3,Story,Create BrokerService,"As a cluster administrator, I want to create a BrokerService with basic configuration, so that messaging infrastructure is available for applications.
+
+*Acceptance Criteria:*
+- Navigate to Workloads > Brokers in Administrator perspective
+- Click ""Create BrokerService""
+- Fill in form: Name, Namespace (read-only), Labels (key-value pairs), Memory
+- Switch between Form View and YAML View
+- Submit form and verify BrokerService is created
+- Verify StatefulSet, Services, and Secrets are created by operator
+
+*Wireframe:* wireframe-service-creation.html",High,EPIC-2,self-provisioning-ui,phase-2,
+TASK-4,Sub-task,BrokerService Creation Form,"*What:* Form to create a BrokerService
+
+*Features:*
+- Form View / YAML View toggle (radio buttons)
+- Name input with DNS-1123 validation
+- Namespace display (read-only from project selector)
+- Labels input: Simple key-value text fields (no ConfigMaps, no localStorage, no drag-and-drop)
+- Memory input with unit dropdown (Mi/Gi)
+- YAML editor with syntax highlighting
+- Create button submits to K8s API
+- Cancel button goes back
+
+*Acceptance Criteria:*
+- Can create BrokerService via form view
+- Can create BrokerService via YAML view
+- Form validates required fields (name, memory)
+- Labels add/remove works correctly
+- Resource appears in kubectl get brokerservices
+- Error messages display if creation fails
+- Test: Create service with valid inputs → verify success
+- Test: Submit form with missing required fields → verify validation errors
+- Test: Create service via YAML → verify it matches form-created resource
+- Test: Add/remove multiple labels → verify they persist correctly
+
+*Wireframe:* wireframe-service-creation.html",High,STORY-3,self-provisioning-ui,phase-2,6d
+STORY-4,Story,View BrokerService List,"As a cluster administrator, I want to see a list of all BrokerServices, so that I can monitor messaging infrastructure.
+
+*Acceptance Criteria:*
+- Navigate to Workloads > Brokers
+- View table with columns: Name, Namespace, Status, Labels, Memory, Created
+- Click on service name to view details
+- Filter/search by name
+- Click ""Create BrokerService"" to create new service
+
+*Wireframe:* wireframe-service-list.html",High,EPIC-2,self-provisioning-ui,phase-3,
+TASK-5,Sub-task,BrokerService List View,"*What:* List view for all BrokerServices in the cluster
+
+*Features:*
+- Table with columns: Name, Namespace, Status, Labels, Created
+- Click on name to navigate to details
+- Filter/search box for name search
+- ""Create BrokerService"" button
+- Pagination controls
+
+*Acceptance Criteria:*
+- Table displays all BrokerServices from all namespaces
+- Clicking service name navigates to detail view
+- Search box filters by name
+- Create button navigates to creation form
+- List updates automatically when resources change
+- Test: Create multiple services in different namespaces → verify all appear
+- Test: Type in search box → verify list filters correctly
+- Test: Click service name → navigate to detail view
+- Test: Create new service → verify it appears in list without refresh
+
+*Note:* Memory usage metrics will be added in Phase 4
+
+*Wireframe:* wireframe-service-list.html",High,STORY-4,self-provisioning-ui,phase-3,5d
+STORY-5,Story,View BrokerService Details,"As a cluster administrator, I want to view detailed information about a BrokerService, so that I can monitor its health and configuration.
+
+*Acceptance Criteria:*
+- Click on a BrokerService from list view
+- View Overview tab: Status, Labels, Conditions, Metrics (placeholder in Phase 2, filled in Phase 4)
+- Navigate to YAML tab to view/edit YAML
+- Navigate to Resources tab: StatefulSet, Services, Secrets, ConfigMaps
+- Navigate to Pods tab showing broker pods
+- Breadcrumb: Brokers > {name}
+
+*Wireframe:* wireframe-broker-details-overview.html, wireframe-broker-details-resources.html",High,EPIC-2,self-provisioning-ui,phase-2,
+TASK-6,Sub-task,BrokerService Details View,"*What:* Multi-tab detail view for a BrokerService
+
+*Features:*
+- Overview tab: Status badge, Labels display, Conditions table, Placeholder for metrics
+- YAML tab: CodeEditor showing resource YAML
+- Resources tab: Table of related resources (StatefulSet, Services, Secrets, ConfigMaps)
+- Pods tab: Table of broker pods
+- Breadcrumb: Brokers > {name}
+- Action menu: Edit, Delete (future)
+
+*Acceptance Criteria:*
+- All tabs render correctly
+- Clicking resource name navigates to resource detail
+- Status badge reflects actual resource status
+- Conditions table shows operator status
+- Test: Navigate to detail view → verify all tabs load
+- Test: Click on StatefulSet link → verify navigation to StatefulSet detail
+- Test: Verify status updates when broker pods start
+- Test: Check YAML tab shows correct resource definition
+
+*Wireframe:* wireframe-broker-details-overview.html, wireframe-broker-details-resources.html",High,STORY-5,self-provisioning-ui,phase-2,5d
+EPIC-3,Epic,BrokerApp Management,"Provide UI for cluster administrators to create, list, and view BrokerApp resources. BrokerApps represent application intent and bind to BrokerServices via label selectors.",High,,self-provisioning-ui,"phase-2,phase-3",
+STORY-6,Story,Create BrokerApp,"As a cluster administrator, I want to create a BrokerApp that binds to a BrokerService, so that applications can send and receive messages.
+
+*Acceptance Criteria:*
+- Navigate to Workloads > BrokerApps
+- Click ""Create BrokerApp""
+- Fill in form: Name, Namespace, Application Role, Service Selector matchLabels, Messaging Capabilities
+- Switch between Form View and YAML View
+- Submit form and verify BrokerApp is created
+- Verify operator provisions app to matching BrokerService
+- Verify credentials are created
+
+*Wireframe:* wirefram-app-creation.html",High,EPIC-3,self-provisioning-ui,phase-2,
+TASK-7,Sub-task,BrokerApp Creation Form,"*What:* Form to create a BrokerApp (binds to BrokerService)
+
+*Features:*
+- Form View / YAML View toggle
+- Name input
+- Namespace display (read-only)
+- Application Role input (text field)
+- Service Selector matchLabels: Simple key-value pairs
+- Messaging Capabilities: Produces To, Consumes From, Subscribes To (arrays of address names)
+- YAML editor
+- Create/Cancel buttons
+
+*Acceptance Criteria:*
+- Can create BrokerApp via form
+- Can add/remove addresses for each capability
+- Can add/remove selector labels
+- Operator provisions app to matching BrokerService
+- Credentials are created
+- Test: Create app with matching labels → verify it binds to correct service
+- Test: Add multiple addresses to ""Produces To"" → verify they all appear in spec
+- Test: Create app with non-matching labels → verify it stays pending
+- Test: Verify credentials secret is created after provisioning
+
+*Wireframe:* wirefram-app-creation.html",High,STORY-6,self-provisioning-ui,phase-2,7d
+STORY-7,Story,View BrokerApp List,"As a cluster administrator, I want to see a list of all BrokerApps, so that I can monitor application bindings.
+
+*Acceptance Criteria:*
+- Navigate to Workloads > BrokerApps
+- View table with columns: Name, Namespace, Status, Provisioned To, Created
+- Click on app name to view details
+- Click on ""Provisioned To"" service name to navigate to service
+- Filter/search by name
+- Click ""Create BrokerApp"" to create new app
+
+*Wireframe:* wireframe-app-list.html",High,EPIC-3,self-provisioning-ui,phase-3,
+TASK-8,Sub-task,BrokerApp List View,"*What:* List view for all BrokerApps in the cluster
+
+*Features:*
+- Table with columns: Name, Namespace, Status, Provisioned To, Created
+- Click on name to navigate to details
+- Click on ""Provisioned To"" service name to navigate to service details
+- Filter/search box for name search
+- ""Create BrokerApp"" button
+- Pagination controls
+
+*Acceptance Criteria:*
+- Table displays all BrokerApps from all namespaces
+- Clicking app name navigates to detail view
+- Clicking provisioned service navigates to service detail
+- Search box filters by name
+- Create button navigates to creation form
+- List updates automatically when resources change
+- Test: Create multiple apps → verify all appear in list
+- Test: Click ""Provisioned To"" service link → navigate to service detail
+- Test: Search for app by name → verify filtering works
+- Test: Delete an app → verify it disappears from list
+
+*Note:* Queue Depth and Consumer Count metrics will be added in Phase 4
+
+*Wireframe:* wireframe-app-list.html",High,STORY-7,self-provisioning-ui,phase-3,5d
+STORY-8,Story,View BrokerApp Details,"As a cluster administrator, I want to view detailed information about a BrokerApp, so that I can get connection information and monitor status.
+
+*Acceptance Criteria:*
+- Click on a BrokerApp from list view
+- View Overview tab: Status, Provisioned Service, Connection Information, Messaging Capabilities, Conditions, Metrics (placeholder in Phase 2, filled in Phase 4)
+- Navigate to YAML tab
+- Navigate to Resources tab: Secrets, ConfigMaps, CertificateRequests, RoleBindings
+- Breadcrumb: BrokerApps > {name}
+
+*Wireframe:* wireframe-app-details-overview.html, wireframe-app-details-resources.html",High,EPIC-3,self-provisioning-ui,phase-2,
+TASK-9,Sub-task,BrokerApp Details View,"*What:* Multi-tab detail view for a BrokerApp
+
+*Features:*
+- Overview tab: Status badge, Provisioned Service link, Application Role, Connection Information, Messaging Capabilities, Conditions table, Placeholder for metrics
+- YAML tab: CodeEditor
+- Resources tab: Table of resources (Secrets, ConfigMaps, CertificateRequests, RoleBindings)
+- Breadcrumb: BrokerApps > {name}
+
+*Acceptance Criteria:*
+- Connection info displays correctly
+- Copy buttons work
+- Link to provisioned service navigates correctly
+- Messaging capabilities display all addresses
+- Test: View provisioned app → verify broker host and port are shown
+- Test: Click copy button → verify value is copied to clipboard
+- Test: Click provisioned service link → navigate to service detail
+- Test: Verify all messaging addresses appear in correct sections
+
+*Wireframe:* wireframe-app-details-overview.html, wireframe-app-details-resources.html",High,STORY-8,self-provisioning-ui,phase-2,6d
+STORY-9,Story,Navigation Integration,"As a cluster administrator, I want to navigate between Brokers and BrokerApps using the OpenShift Console sidebar, so that I can easily access all messaging resources.
+
+*Acceptance Criteria:*
+- ""Brokers"" menu item appears in sidebar under Workloads
+- ""BrokerApps"" menu item appears in sidebar under Workloads
+- All routes navigate correctly
+- Breadcrumbs show correct hierarchy on all pages",Medium,EPIC-1,self-provisioning-ui,phase-3,
+TASK-10,Sub-task,Console Navigation Integration,"*What:* Integrate list and detail views into OpenShift Console navigation
+
+*Features:*
+- Add ""Brokers"" menu item under Workloads (points to list)
+- Add ""BrokerApps"" menu item under Workloads (points to list)
+- Configure routes for all views (take inspiration from SPP)
+- Breadcrumb navigation on all pages
+
+*Dependencies:* BrokerService List View, BrokerApp List View
+
+*Acceptance Criteria:*
+- Brokers menu item appears in sidebar under Workloads
+- BrokerApps menu item appears in sidebar under Workloads
+- All routes navigate correctly
+- Breadcrumbs show correct hierarchy
+- Test: Click ""Brokers"" in sidebar → navigate to list view
+- Test: Navigate to detail → verify breadcrumbs show ""Brokers > {name}""
+- Test: All URLs are bookmarkable and refreshable
+- Documentation: Add screenshots of navigation to README
+
+*Wireframe:* All wireframes",Medium,STORY-9,self-provisioning-ui,phase-3,3d
+EPIC-4,Epic,Metrics & Monitoring,"Display performance metrics for BrokerServices and BrokerApps using Prometheus queries and charts. Enables cluster administrators to monitor messaging infrastructure health.",Medium,,self-provisioning-ui,phase-4,
+STORY-10,Story,View BrokerService Metrics,"As a cluster administrator, I want to see metrics for a BrokerService, so that I can monitor performance and capacity.
+
+*Acceptance Criteria:*
+- Open BrokerService details page
+- View metrics section with charts: Memory Usage, CPU Usage
+- Select time range (1h, 6h, 24h)
+- Charts update based on Prometheus queries
+
+*Wireframe:* wireframe-broker-details-overview.html",Medium,EPIC-4,self-provisioning-ui,phase-4,
+TASK-11,Sub-task,Metrics Chart Foundation,"*What:* Build reusable infrastructure for displaying Prometheus metrics (extract from SPP where applicable)
+
+*Features:*
+- Create reusable MetricsChart component
+- Integrate with OpenShift monitoring API
+- Time range selector (1h, 6h, 24h)
+- Chart rendering
+- Loading and error states
+- No data state
+
+*Dependencies:* Configure ServiceMonitor
+
+*Acceptance Criteria:*
+- Chart component accepts query and renders line chart
+- Time range selector updates query and refreshes data
+- Loading spinner shows while fetching
+- Error message displays if query fails
+- ""No data"" message shows if query returns empty
+- Test: Render chart with valid query → verify data displays
+- Test: Change time range → verify chart updates
+- Test: Use invalid query → verify error message appears
+- Test: Query with no data → verify ""No data"" state shows
+
+*Wireframe:* N/A",High,STORY-10,self-provisioning-ui,phase-4,5d
+TASK-12,Sub-task,BrokerService Metrics Charts,"*What:* Add metrics charts to BrokerService overview tab
+
+*Features:*
+- Memory Usage chart
+- CPU Usage chart
+- Shared time range selector (applies to both charts)
+- Charts display in grid layout
+
+*Dependencies:* BrokerService Details View, Metrics Chart Foundation
+
+*Acceptance Criteria:*
+- Memory chart shows container memory usage over time
+- CPU chart shows CPU rate over time
+- Time range selector updates both charts
+- Charts show ""No data"" if broker has no pods
+- Broker name is correctly substituted in queries
+- Test: View broker with running pods → verify charts show data
+- Test: Change time range → verify both charts update
+- Test: View broker with no pods → verify ""No data"" message
+- Test: Compare chart data with Prometheus UI → verify accuracy
+
+*Wireframe:* wireframe-broker-details-overview.html",Medium,STORY-10,self-provisioning-ui,phase-4,4d
+STORY-11,Story,View BrokerApp Metrics,"As a cluster administrator, I want to see metrics for a BrokerApp, so that I can monitor message throughput.
+
+*Acceptance Criteria:*
+- Open BrokerApp details page
+- View metrics section with charts: Queue Depth, Consumer Count
+- Select time range (1h, 6h, 24h)
+- Charts update based on Prometheus queries
+
+*Wireframe:* wireframe-app-details-overview.html",Medium,EPIC-4,self-provisioning-ui,phase-4,
+TASK-13,Sub-task,BrokerApp Metrics Charts,"*What:* Add metrics charts to BrokerApp overview tab
+
+*Features:*
+- Queue Depth chart (derived from Message Count - Delivering Count)
+- Consumer Count chart
+- Shared time range selector (applies to both charts)
+- Charts display in grid layout
+
+*Dependencies:* BrokerApp Details View, Metrics Chart Foundation
+
+*Acceptance Criteria:*
+- Queue Depth chart shows waiting messages over time
+- Consumer Count chart shows active consumers over time
+- Time range selector updates both charts
+- Charts show ""No data"" if app has no activity
+- App role is correctly substituted in queries
+- Test: Send messages to app → verify queue depth increases
+- Test: Start consumer → verify consumer count chart updates
+- Test: Change time range → verify both charts refresh
+- Test: App with no messages → verify charts show zero or ""No data""
+
+*Wireframe:* wireframe-app-details-overview.html",Medium,STORY-11,self-provisioning-ui,phase-4,4d
+TASK-14,Sub-task,BrokerService List Metrics,"*What:* Add Memory usage column to BrokerService list
+
+*Features:*
+- Add Memory column to table (shows actual usage from Prometheus)
+- Format memory values with units (Mi/Gi)
+- Show loading state while fetching metrics
+- Show ""N/A"" if metrics unavailable
+
+*Dependencies:* Metrics Chart Foundation, BrokerService List View
+
+*Acceptance Criteria:*
+- Memory column displays actual container memory usage
+- Values update as metrics change
+- Column shows ""N/A"" for services with no running pods
+- List performance remains good with metrics queries
+- Test: View list → verify memory values match detail view
+- Test: Service with no pods → verify ""N/A"" displayed
+
+*Wireframe:* wireframe-service-list.html",Medium,STORY-4,self-provisioning-ui,phase-4,3d
+TASK-15,Sub-task,BrokerApp List Metrics,"*What:* Add Queue Depth and Consumer Count columns to BrokerApp list
+
+*Features:*
+- Add Queue Depth column (Message Count - Delivering Count)
+- Add Consumer Count column
+- Show loading state while fetching metrics
+- Show ""N/A"" if metrics unavailable
+
+*Dependencies:* Metrics Chart Foundation, BrokerApp List View
+
+*Acceptance Criteria:*
+- Queue Depth column shows current waiting messages
+- Consumer Count column shows active consumers
+- Values update as metrics change
+- Columns show ""N/A"" for apps with no activity
+- List performance remains good with metrics queries
+- Test: Send messages → verify queue depth updates in list
+- Test: Start consumer → verify consumer count updates
+- Test: App with no messages → verify ""N/A"" displayed
+
+*Wireframe:* wireframe-app-list.html",Medium,STORY-7,self-provisioning-ui,phase-4,3d

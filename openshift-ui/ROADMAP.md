@@ -6,7 +6,7 @@ This roadmap outlines the tasks required to implement the OpenShift Console dyna
 
 **Goal**: Deliver a basic working UI for BrokerService and BrokerApp CRUD operations  
 **User**: Cluster administrators only (kubeadmin)  
-**Timeline**: ~18 weeks with 2-3 developers  
+**Timeline**: ~17 weeks with 2-3 developers  
 **Philosophy**: Ship the simplest thing that works, iterate later
 
 ## Scope
@@ -33,10 +33,11 @@ This roadmap outlines the tasks required to implement the OpenShift Console dyna
 1. **Phase 1: Scripts & Setup** (2 weeks) - Get cluster ready
 2. **Phase 2: Core CRUD** (8 weeks) - Creation and detail views
 3. **Phase 3: Lists** (3 weeks) - List views and navigation
-4. **Phase 4: Metrics** (3 weeks) - Charts and monitoring
-5. **Phase 5: Polish** (2 weeks) - Testing and docs
+4. **Phase 4: Metrics** (4 weeks) - Charts and monitoring
 
-**Total**: ~18 weeks
+**Total**: ~17 weeks
+
+**Note**: Testing and documentation are integrated into each task rather than as a separate phase.
 
 ## Wireframe Reference
 
@@ -92,6 +93,9 @@ scripts/
 - [ ] Script file with inline comments
 - [ ] README section explaining usage
 - [ ] Example invocation in docs
+- [ ] Test: Run script and verify all secrets are created
+- [ ] Test: Verify certificates have correct fields (CN, SAN, etc.)
+- [ ] Test: Use generated certificates to connect broker and app
 
 ---
 
@@ -122,6 +126,8 @@ kubectl -n openshift-user-workload-monitoring get pods
 **Deliverables**:
 - [ ] Script or doc with exact commands
 - [ ] Verification steps documented
+- [ ] Test: Verify user workload monitoring pods are running
+- [ ] Test: Confirm Prometheus is accessible
 
 ---
 
@@ -140,27 +146,10 @@ kubectl -n openshift-user-workload-monitoring get pods
 **Deliverables**:
 - [ ] `scripts/setup-servicemonitor.sh`
 - [ ] ServiceMonitor template YAML
-- [ ] Test query examples
-
----
-
-### 1.4 Development Environment
-**Effort**: 1-2 days  
-**Owner**: All developers
-
-**What**: Set up local dev environment for plugin development
-
-**Tasks**:
-- Install OpenShift Local (CRC) or connect to dev cluster
-- Install `oc` CLI and `kubectl`
-- Clone plugin repo and install dependencies
-- Run plugin in dev mode (`npm run dev`)
-- Verify plugin loads in OpenShift Console
-
-**Deliverables**:
-- [ ] Setup guide in README
-- [ ] Troubleshooting section
-- [ ] Screenshot of working local setup
+- [ ] Test query examples documented
+- [ ] Test: Verify ServiceMonitor is created and active
+- [ ] Test: Run sample PromQL queries and verify data is returned
+- [ ] Test: Verify metrics appear in OpenShift Console monitoring UI
 
 ---
 
@@ -184,23 +173,21 @@ kubectl -n openshift-user-workload-monitoring get pods
   - "Add Label" button to add another row
   - No ConfigMaps, no localStorage, no drag-and-drop
 - [ ] Memory input with unit dropdown (Mi/Gi)
-- [ ] YAML editor with syntax highlighting (CodeEditor component)
+- [ ] YAML editor with syntax highlighting
 - [ ] Create button submits to K8s API
 - [ ] Cancel button goes back
-
-**Tech Stack**:
-- React component: `src/components/BrokerServiceForm/BrokerServiceForm.tsx`
-- PatternFly: `Form`, `FormGroup`, `TextInput`, `Select`, `CodeEditor`
-- State: Simple `useState` (no reducer needed for MVP)
-- Validation: Basic required field checks
 
 **Acceptance Criteria**:
 - [ ] Can create BrokerService via form view
 - [ ] Can create BrokerService via YAML view
-- [ ] Form validates required fields
+- [ ] Form validates required fields (name, memory)
 - [ ] Labels add/remove works correctly
 - [ ] Resource appears in `kubectl get brokerservices`
 - [ ] Error messages display if creation fails
+- [ ] Test: Create service with valid inputs → verify success
+- [ ] Test: Submit form with missing required fields → verify validation errors
+- [ ] Test: Create service via YAML → verify it matches form-created resource
+- [ ] Test: Add/remove multiple labels → verify they persist correctly
 
 ---
 
@@ -227,16 +214,15 @@ kubectl -n openshift-user-workload-monitoring get pods
 - [ ] Breadcrumb: `Brokers > {name}`
 - [ ] Action menu: Edit, Delete (future)
 
-**Tech Stack**:
-- Component: `src/components/BrokerServiceDetails/`
-- PatternFly: `Tabs`, `DescriptionList`, `Table`, `Label`
-- K8s API: `useK8sWatchResource` hook
-
 **Acceptance Criteria**:
 - [ ] All tabs render correctly
 - [ ] Clicking resource name navigates to resource detail
 - [ ] Status badge reflects actual resource status
 - [ ] Conditions table shows operator status
+- [ ] Test: Navigate to detail view → verify all tabs load
+- [ ] Test: Click on StatefulSet link → verify navigation to StatefulSet detail
+- [ ] Test: Verify status updates when broker pods start
+- [ ] Test: Check YAML tab shows correct resource definition
 
 ---
 
@@ -263,17 +249,16 @@ kubectl -n openshift-user-workload-monitoring get pods
 - [ ] YAML editor
 - [ ] Create/Cancel buttons
 
-**Tech Stack**:
-- Component: `src/components/BrokerAppForm/BrokerAppForm.tsx`
-- PatternFly: `Form`, `FormGroup`, `TextInput`, `Button`
-- State: Array management for addresses and labels
-
 **Acceptance Criteria**:
 - [ ] Can create BrokerApp via form
 - [ ] Can add/remove addresses for each capability
 - [ ] Can add/remove selector labels
 - [ ] Operator provisions app to matching BrokerService
 - [ ] Credentials are created
+- [ ] Test: Create app with matching labels → verify it binds to correct service
+- [ ] Test: Add multiple addresses to "Produces To" → verify they all appear in spec
+- [ ] Test: Create app with non-matching labels → verify it stays pending
+- [ ] Test: Verify credentials secret is created after provisioning
 
 ---
 
@@ -292,7 +277,7 @@ kubectl -n openshift-user-workload-monitoring get pods
   - **Connection Information** section:
     - Broker Host (with copy button)
     - Acceptor Port (with copy button)
-    - Connection Secret (link to secret)
+    - Connection Secret (link to secret) -> might not be doable until the operator is integrated with cert-manager
   - **Messaging Capabilities** section:
     - Lists for Produces To, Consumes From, Subscribes To
   - Conditions table
@@ -302,16 +287,15 @@ kubectl -n openshift-user-workload-monitoring get pods
   - Secrets, ConfigMaps, CertificateRequests, RoleBindings
 - [ ] Breadcrumb: `BrokerApps > {name}`
 
-**Tech Stack**:
-- Component: `src/components/BrokerAppDetails/`
-- PatternFly: `Tabs`, `DescriptionList`, `ClipboardCopy`
-- Copy-to-clipboard functionality
-
 **Acceptance Criteria**:
 - [ ] Connection info displays correctly
 - [ ] Copy buttons work
 - [ ] Link to provisioned service navigates correctly
 - [ ] Messaging capabilities display all addresses
+- [ ] Test: View provisioned app → verify broker host and port are shown
+- [ ] Test: Click copy button → verify value is copied to clipboard
+- [ ] Test: Click provisioned service link → navigate to service detail
+- [ ] Test: Verify all messaging addresses appear in correct sections
 
 ---
 
@@ -327,16 +311,11 @@ kubectl -n openshift-user-workload-monitoring get pods
 **What**: List view for all BrokerServices in the cluster
 
 **Features**:
-- [ ] Table with columns: Name, Namespace, Status, Labels, Memory, Created
+- [ ] Table with columns: Name, Namespace, Status, Labels, Created
 - [ ] Click on name to navigate to details
 - [ ] Filter/search box for name search
 - [ ] "Create BrokerService" button
 - [ ] Pagination controls
-
-**Tech Stack**:
-- Component: `src/components/BrokerServiceList/BrokerServiceList.tsx`
-- PatternFly: `Table`, `Pagination`, `SearchInput`
-- K8s API: `useK8sWatchResources` hook for list with watch
 
 **Acceptance Criteria**:
 - [ ] Table displays all BrokerServices from all namespaces
@@ -344,6 +323,12 @@ kubectl -n openshift-user-workload-monitoring get pods
 - [ ] Search box filters by name
 - [ ] Create button navigates to creation form
 - [ ] List updates automatically when resources change
+- [ ] Test: Create multiple services in different namespaces → verify all appear
+- [ ] Test: Type in search box → verify list filters correctly
+- [ ] Test: Click service name → navigate to detail view
+- [ ] Test: Create new service → verify it appears in list without refresh
+
+**Note**: Memory usage metrics will be added in Phase 4
 
 ---
 
@@ -362,11 +347,6 @@ kubectl -n openshift-user-workload-monitoring get pods
 - [ ] "Create BrokerApp" button
 - [ ] Pagination controls
 
-**Tech Stack**:
-- Component: `src/components/BrokerAppList/BrokerAppList.tsx`
-- PatternFly: `Table`, `Pagination`, `SearchInput`
-- K8s API: `useK8sWatchResources` hook for list with watch
-
 **Acceptance Criteria**:
 - [ ] Table displays all BrokerApps from all namespaces
 - [ ] Clicking app name navigates to detail view
@@ -374,6 +354,12 @@ kubectl -n openshift-user-workload-monitoring get pods
 - [ ] Search box filters by name
 - [ ] Create button navigates to creation form
 - [ ] List updates automatically when resources change
+- [ ] Test: Create multiple apps → verify all appear in list
+- [ ] Test: Click "Provisioned To" service link → navigate to service detail
+- [ ] Test: Search for app by name → verify filtering works
+- [ ] Test: Delete an app → verify it disappears from list
+
+**Note**: Queue Depth and Consumer Count metrics will be added in Phase 4
 
 ---
 
@@ -387,22 +373,19 @@ kubectl -n openshift-user-workload-monitoring get pods
 **Features**:
 - [ ] Add "Brokers" menu item under Workloads (points to list)
 - [ ] Add "BrokerApps" menu item under Workloads (points to list)
-- [ ] Configure routes for all views:
-  - `/k8s/cluster/broker.amq.io~v1beta1~BrokerService` → List
-  - `/k8s/cluster/broker.amq.io~v1beta1~BrokerService/~new` → Create
-  - `/k8s/ns/:ns/broker.amq.io~v1beta1~BrokerService/:name` → Details
+- [ ] Configure routes for all views (take inspiration from SPP)
   - Same pattern for BrokerApp
 - [ ] Breadcrumb navigation on all pages
-
-**Tech Stack**:
-- File: `console-extensions.json`
-- OpenShift Console SDK: `NavItem`, `RoutePage` extensions
 
 **Acceptance Criteria**:
 - [ ] Brokers menu item appears in sidebar under Workloads
 - [ ] BrokerApps menu item appears in sidebar under Workloads
 - [ ] All routes navigate correctly
 - [ ] Breadcrumbs show correct hierarchy
+- [ ] Test: Click "Brokers" in sidebar → navigate to list view
+- [ ] Test: Navigate to detail → verify breadcrumbs show "Brokers > {name}"
+- [ ] Test: All URLs are bookmarkable and refreshable
+- [ ] Documentation: Add screenshots of navigation to README
 
 ---
 
@@ -415,28 +398,26 @@ kubectl -n openshift-user-workload-monitoring get pods
 **Owner**: Frontend developer  
 **Dependencies**: 1.3 (ServiceMonitor setup)
 
-**What**: Build reusable infrastructure for displaying Prometheus metrics
+**What**: Build reusable infrastructure for displaying Prometheus metrics (extract from SPP where applicatable)
 
 **Features**:
 - [ ] Create reusable `MetricsChart` component
 - [ ] Integrate with OpenShift monitoring API
 - [ ] Time range selector (1h, 6h, 24h)
-- [ ] SVG-based chart rendering
+- [ ] chart rendering
 - [ ] Loading and error states
 - [ ] No data state
 
-**Tech Stack**:
-- Component: `src/components/MetricsChart/MetricsChart.tsx`
-- OpenShift Console SDK: `usePrometheusPoll` hook
-- PatternFly: `Chart`, `ChartAxis`, `ChartLine`
-- PromQL query builder utilities
-
 **Acceptance Criteria**:
-- [ ] Chart component accepts PromQL query and renders line chart
+- [ ] Chart component accepts query and renders line chart
 - [ ] Time range selector updates query and refreshes data
 - [ ] Loading spinner shows while fetching
 - [ ] Error message displays if query fails
 - [ ] "No data" message shows if query returns empty
+- [ ] Test: Render chart with valid query → verify data displays
+- [ ] Test: Change time range → verify chart updates
+- [ ] Test: Use invalid query → verify error message appears
+- [ ] Test: Query with no data → verify "No data" state shows
 
 ---
 
@@ -453,26 +434,16 @@ kubectl -n openshift-user-workload-monitoring get pods
 - [ ] Shared time range selector (applies to both charts)
 - [ ] Charts display in grid layout
 
-**Tech Stack**:
-- Update: `src/components/BrokerServiceDetails/OverviewTab.tsx`
-- Use `MetricsChart` component from 4.1
-- PromQL queries with broker name substitution
-
-**PromQL Queries**:
-```promql
-# Memory Usage
-container_memory_usage_bytes{pod=~"<broker-name>-ss-.*"}
-
-# CPU Usage (rate over 5 minutes)
-rate(container_cpu_usage_seconds_total{pod=~"<broker-name>-ss-.*"}[5m])
-```
-
 **Acceptance Criteria**:
 - [ ] Memory chart shows container memory usage over time
 - [ ] CPU chart shows CPU rate over time
 - [ ] Time range selector updates both charts
 - [ ] Charts show "No data" if broker has no pods
 - [ ] Broker name is correctly substituted in queries
+- [ ] Test: View broker with running pods → verify charts show data
+- [ ] Test: Change time range → verify both charts update
+- [ ] Test: View broker with no pods → verify "No data" message
+- [ ] Test: Compare chart data with Prometheus UI → verify accuracy
 
 ---
 
@@ -489,107 +460,64 @@ rate(container_cpu_usage_seconds_total{pod=~"<broker-name>-ss-.*"}[5m])
 - [ ] Shared time range selector (applies to both charts)
 - [ ] Charts display in grid layout
 
-**Tech Stack**:
-- Update: `src/components/BrokerAppDetails/OverviewTab.tsx`
-- Use `MetricsChart` component from 4.1
-- PromQL queries with app role substitution
-
-**PromQL Queries**:
-```promql
-# Queue Depth (messages waiting to be processed)
-artemis_message_count{role="<app-role>"} - artemis_delivering_count{role="<app-role>"}
-
-# Consumer Count (active consumers for this app)
-artemis_consumer_count{role="<app-role>"}
-```
-
 **Acceptance Criteria**:
 - [ ] Queue Depth chart shows waiting messages over time
 - [ ] Consumer Count chart shows active consumers over time
 - [ ] Time range selector updates both charts
 - [ ] Charts show "No data" if app has no activity
 - [ ] App role is correctly substituted in queries
+- [ ] Test: Send messages to app → verify queue depth increases
+- [ ] Test: Start consumer → verify consumer count chart updates
+- [ ] Test: Change time range → verify both charts refresh
+- [ ] Test: App with no messages → verify charts show zero or "No data"
 
 ---
 
-## Phase 5: Polish & Testing (2 weeks)
+### 4.4 BrokerService List Metrics
+**Effort**: 2-3 days  
+**Owner**: Frontend developer  
+**Dependencies**: 4.1 (Metrics Foundation), 3.1 (BrokerService List)
 
-**Goal**: Validate all features and document the system
+**What**: Add Memory usage column to BrokerService list
 
-### 5.1 Integration Testing
-**Effort**: 5-7 days  
-**Owner**: All developers  
-**Dependencies**: All previous phases
+**Features**:
+- [ ] Add Memory column to table (shows actual usage from Prometheus)
+- [ ] Format memory values with units (Mi/Gi)
+- [ ] Show loading state while fetching metrics
+- [ ] Show "N/A" if metrics unavailable
 
-**What**: End-to-end testing of all user workflows
-
-**Test Scenarios**:
-- [ ] **BrokerService Workflow**:
-  - Create BrokerService via form view
-  - Create BrokerService via YAML view
-  - Verify StatefulSet, Services, Secrets created
-  - View service in list
-  - View service details (Overview, YAML, Resources, Pods tabs)
-  - Verify metrics charts display correctly
-- [ ] **BrokerApp Workflow**:
-  - Create BrokerApp via form view
-  - Create BrokerApp via YAML view
-  - Verify app provisions to matching service
-  - Verify credentials are created
-  - View app in list
-  - View app details (Overview, YAML, Resources tabs)
-  - Verify metrics charts display correctly
-  - Verify connection information is accessible
-- [ ] **Navigation**:
-  - All breadcrumbs navigate correctly
-  - All links between resources work
-  - Sidebar navigation highlights active item
-- [ ] **Error Handling**:
-  - Invalid form input shows validation errors
-  - Failed API calls show error messages
-  - Metrics with no data show "No data" state
-
-**Deliverables**:
-- [ ] Test checklist (completed)
-- [ ] Bug list (if any issues found)
-- [ ] Video recording of happy path workflow
+**Acceptance Criteria**:
+- [ ] Memory column displays actual container memory usage
+- [ ] Values update as metrics change
+- [ ] Column shows "N/A" for services with no running pods
+- [ ] List performance remains good with metrics queries
+- [ ] Test: View list → verify memory values match detail view
+- [ ] Test: Service with no pods → verify "N/A" displayed
 
 ---
 
-### 5.2 Documentation
-**Effort**: 3-4 days  
-**Owner**: Technical writer + Frontend developer  
-**Dependencies**: 5.1
+### 4.5 BrokerApp List Metrics
+**Effort**: 2-3 days  
+**Owner**: Frontend developer  
+**Dependencies**: 4.1 (Metrics Foundation), 3.2 (BrokerApp List)
 
-**What**: User-facing and developer documentation
+**What**: Add Queue Depth and Consumer Count columns to BrokerApp list
 
-**Documentation Sections**:
-- [ ] **Installation Guide**:
-  - Prerequisites (OpenShift version, Operator installation)
-  - Plugin deployment steps
-  - Certificate generation script usage
-  - Prometheus setup verification
-- [ ] **User Guide**:
-  - Creating a BrokerService (with screenshots)
-  - Creating a BrokerApp (with screenshots)
-  - Understanding connection information
-  - Reading metrics charts
-- [ ] **Troubleshooting Guide**:
-  - Common errors and solutions
-  - Certificate issues
-  - Metrics not appearing
-  - App not provisioning to service
-- [ ] **Developer Guide**:
-  - Local development setup
-  - Running plugin in dev mode
-  - Building and deploying
-  - Contributing guidelines
+**Features**:
+- [ ] Add Queue Depth column (Message Count - Delivering Count)
+- [ ] Add Consumer Count column
+- [ ] Show loading state while fetching metrics
+- [ ] Show "N/A" if metrics unavailable
 
-**Deliverables**:
-- [ ] README.md with installation steps
-- [ ] docs/USER_GUIDE.md with screenshots
-- [ ] docs/TROUBLESHOOTING.md
-- [ ] docs/DEVELOPMENT.md
+**Acceptance Criteria**:
+- [ ] Queue Depth column shows current waiting messages
+- [ ] Consumer Count column shows active consumers
+- [ ] Values update as metrics change
+- [ ] Columns show "N/A" for apps with no activity
+- [ ] List performance remains good with metrics queries
+- [ ] Test: Send messages → verify queue depth updates in list
+- [ ] Test: Start consumer → verify consumer count updates
+- [ ] Test: App with no messages → verify "N/A" displayed
 
 ---
 
@@ -597,14 +525,13 @@ artemis_consumer_count{role="<app-role>"}
 
 ```mermaid
 gantt
-    title Simplified Implementation Timeline (18 Weeks)
+    title Simplified Implementation Timeline (17 Weeks)
     dateFormat YYYY-MM-DD
 
     section Phase 1 Scripts
     Certificate Script       :p1_1, 2026-04-07, 4d
     Monitoring Config        :p1_2, 2026-04-07, 1d
     ServiceMonitor Setup     :p1_3, 2026-04-09, 3d
-    Dev Environment          :p1_4, 2026-04-14, 2d
 
     section Phase 2 CRUD
     BS Creation Form         :p2_1, 2026-04-21, 6d
@@ -621,13 +548,39 @@ gantt
     Metrics Foundation       :p4_1, 2026-06-17, 5d
     BS Metrics               :p4_2, 2026-06-24, 4d
     BA Metrics               :p4_3, 2026-07-01, 4d
-
-    section Phase 5 Polish
-    Integration Testing      :p5_1, 2026-07-08, 7d
-    Documentation            :p5_2, 2026-07-17, 4d
+    BS List Metrics          :p4_4, 2026-07-07, 3d
+    BA List Metrics          :p4_5, 2026-07-10, 3d
 ```
 
-**Total Duration**: ~18 weeks (vs. 30 weeks for full feature set)
+**Total Duration**: ~17 weeks (vs. 30 weeks for full feature set)
+
+**Note**: Testing is integrated into each task's acceptance criteria. Documentation should be written as each feature is completed.
+
+---
+
+## Documentation Guidelines
+
+Since testing and documentation are integrated into each task, developers should:
+
+**As you complete each task**:
+- [ ] Update README.md with setup/usage instructions if applicable
+- [ ] Add inline code comments for complex logic
+- [ ] Document any environment variables or configuration
+- [ ] Take screenshots of completed UI features
+- [ ] Update this ROADMAP.md by checking off completed items
+
+**By end of each phase**:
+- [ ] Verify all task checkboxes are complete
+- [ ] Create/update relevant docs in `docs/` folder
+- [ ] Record a short demo video showing the workflow
+- [ ] Document any known issues or limitations
+
+**Final deliverables** (by end of Phase 4):
+- [ ] README.md with complete installation and usage guide
+- [ ] docs/DEVELOPMENT.md for local development setup
+- [ ] docs/TROUBLESHOOTING.md with common issues and solutions
+- [ ] docs/USER_GUIDE.md with screenshots of all features
+- [ ] Demo video showing full BrokerService and BrokerApp workflow
 
 ---
 

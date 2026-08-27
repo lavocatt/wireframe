@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit BrokerService - OpenShift Console</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pf-blue': '#0066cc',
+                        'pf-blue-hover': '#004080',
+                        'pf-gray': '#f0f0f0',
+                        'pf-border': '#d2d2d2',
+                        'os-dark': '#1f1f1f',
+                        'os-header': '#292929',
+                        'os-sidebar': '#212427',
+                        'os-nav-hover': '#3c3f42',
+                        'os-warning': '#a30000',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body class="bg-pf-gray font-sans h-screen overflow-hidden">
+    <!-- Warning Banner -->
+    <div class="bg-os-warning text-white text-center py-1 text-xs">
+        OpenShift Local cluster is for development and testing purposes. DON'T use it for production.
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-os-header text-white h-12 flex items-center px-4 shadow-md">
+        <div class="flex items-center space-x-4">
+            <button class="text-white hover:text-gray-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <div class="flex items-center space-x-2">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21.665 12.713l-2.43-4.313a3.357 3.357 0 0 0-.124-.198c-.03-.044-.063-.086-.096-.128l-.013-.016a3.605 3.605 0 0 0-.844-.777 3.557 3.557 0 0 0-1.935-.567H8.999L6.57 2.401A3.57 3.57 0 0 0 3.428.287a3.584 3.584 0 0 0-2.143 2.113L.003 6.713v.573l1.282 4.313c.36 1.21 1.29 2.164 2.43 2.573l7.224 4.313a3.585 3.585 0 0 0 3.499 0l7.224-4.313c1.14-.409 2.07-1.363 2.43-2.573l.573-1.886zm-12.667.574v6.86l-5.43-3.144a2.288 2.288 0 0 1-1.283-2.057V8.403l6.713 4.884zm1.142-.859L3.428 7.544l2.43-4.313L12.57 6.86l-2.43 5.568zm7.287 3.715l-5.43 3.144v-6.86l6.713-4.884v6.543c0 .857-.48 1.642-1.283 2.057z"/>
+                </svg>
+                <span class="font-bold text-xl">okd</span>
+            </div>
+        </div>
+        <div class="ml-auto flex items-center space-x-3">
+            <button class="text-gray-300 hover:text-white relative">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                <span class="absolute -top-1 -right-1 bg-pf-blue text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">1</span>
+            </button>
+            <button class="text-gray-300 hover:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+            </button>
+            <button class="text-gray-300 hover:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </button>
+            <button class="text-white hover:text-gray-300 flex items-center space-x-1">
+                <span class="text-sm">kubeadmin</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Project Selector Bar -->
+    <div class="bg-white border-b border-gray-200 px-4 py-2">
+        <div class="flex items-center">
+            <label class="text-sm font-medium text-gray-700 mr-2">Project:</label>
+            <div class="relative">
+                <button class="flex items-center space-x-2 px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pf-blue">
+                    <span class="text-sm">messaging-infra</span>
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex h-[calc(100vh-8rem)]">
+        <!-- Left Sidebar Navigation -->
+        <aside class="bg-os-sidebar text-gray-300 w-56 overflow-y-auto">
+            <nav class="py-2">
+                <div class="px-3 mb-2">
+                    <button class="w-full flex items-center justify-between px-3 py-2 text-sm text-white hover:bg-os-nav-hover rounded">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                            <span>Administrator</span>
+                        </div>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="space-y-0">
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Home</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Operators</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+
+                    <div>
+                        <button class="w-full flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                            <span>Workloads</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="bg-os-dark">
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Pods</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Deployments</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">DeploymentConfigs</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">StatefulSets</a>
+                            <a href="#" class="block px-8 py-2 text-sm bg-gray-700 border-l-2 border-white text-white">Brokers</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">BrokerApps</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">Secrets</a>
+                            <a href="#" class="block px-8 py-2 text-sm hover:bg-os-nav-hover">ConfigMaps</a>
+                        </div>
+                    </div>
+
+                    <a href="#" class="flex items-center justify-between px-4 py-2 text-sm hover:bg-os-nav-hover">
+                        <span>Storage</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto bg-white">
+            <div class="max-w-4xl mx-auto p-6">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <h1 class="text-2xl font-normal text-gray-900 mb-2">Edit BrokerService</h1>
+                    <p class="text-sm text-gray-600">
+                        Modify the configuration of an existing BrokerService. Changes will be applied to the running broker cluster after saving.
+                    </p>
+                </div>
+
+                <!-- Configure Via Radio Buttons -->
+                <div class="mb-6">
+                    <label class="text-sm font-medium text-gray-900 mb-3 block">Configure Via</label>
+                    <div class="flex gap-6">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="configure-via" value="form" checked class="w-4 h-4 text-pf-blue border-gray-300 focus:ring-pf-blue" onclick="document.getElementById('form-view').style.display='block'; document.getElementById('yaml-view').style.display='none';">
+                            <span class="ml-2 text-sm text-gray-900">Form View</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="configure-via" value="yaml" class="w-4 h-4 text-pf-blue border-gray-300 focus:ring-pf-blue" onclick="document.getElementById('form-view').style.display='none'; document.getElementById('yaml-view').style.display='block';">
+                            <span class="ml-2 text-sm text-gray-900">YAML View</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Form View -->
+                <div id="form-view">
+                <form class="space-y-8">
+                    <!-- Section 1: General Details -->
+                    <div class="bg-white border-t border-gray-200 pt-6">
+                        <h2 class="text-lg font-medium text-gray-900 mb-6">General Details</h2>
+                        <div class="space-y-5">
+                            <!-- Name (read-only) -->
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-900 mb-2">
+                                    Name
+                                </label>
+                                <div class="w-full px-3 py-2 border border-gray-200 rounded bg-gray-50 text-gray-700">
+                                    messaging-service
+                                </div>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Resource name cannot be changed after creation.
+                                </p>
+                            </div>
+
+                            <!-- Namespace (read-only) -->
+                            <div>
+                                <label for="namespace" class="block text-sm font-medium text-gray-900 mb-2">
+                                    Namespace
+                                </label>
+                                <div class="w-full px-3 py-2 border border-gray-200 rounded bg-gray-50 text-gray-700">
+                                    messaging-infra
+                                </div>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Namespace cannot be changed after creation.
+                                </p>
+                            </div>
+
+                            <!-- Labels (editable) -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">
+                                    Labels
+                                </label>
+                                <p class="text-xs text-gray-500 mb-3">
+                                    Add labels that BrokerApps can use to discover and bind to this service.
+                                </p>
+
+                                <div class="space-y-3">
+                                    <div class="space-y-2">
+                                        <!-- Label 1 -->
+                                        <div class="flex gap-2 items-center">
+                                            <input
+                                                type="text"
+                                                placeholder="Key (e.g., tier)"
+                                                value="tier"
+                                                class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                            />
+                                            <span class="text-gray-500">=</span>
+                                            <input
+                                                type="text"
+                                                placeholder="Value (e.g., production)"
+                                                value="production"
+                                                class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                            />
+                                            <button type="button" class="text-red-600 hover:text-red-800 p-1" title="Remove">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+
+                                        <!-- Label 2 -->
+                                        <div class="flex gap-2 items-center">
+                                            <input
+                                                type="text"
+                                                placeholder="Key"
+                                                value="forWorkQueue"
+                                                class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                            />
+                                            <span class="text-gray-500">=</span>
+                                            <input
+                                                type="text"
+                                                placeholder="Value"
+                                                value="true"
+                                                class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                            />
+                                            <button type="button" class="text-red-600 hover:text-red-800 p-1" title="Remove">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        class="inline-flex items-center px-3 py-2 text-sm text-pf-blue border border-pf-blue rounded hover:bg-blue-50 focus:outline-none"
+                                    >
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                        </svg>
+                                        Add Label
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Infrastructure & Capacity -->
+                    <div class="bg-white border-t border-gray-200 pt-6">
+                        <h2 class="text-lg font-medium text-gray-900 mb-6">Infrastructure & Capacity</h2>
+                        <div class="space-y-5">
+                            <!-- Memory (RAM) -->
+                            <div>
+                                <label for="memory" class="block text-sm font-medium text-gray-900 mb-2">
+                                    Memory (RAM) <span class="text-red-600">*</span>
+                                </label>
+                                <div class="flex gap-2">
+                                    <input
+                                        type="number"
+                                        id="memory"
+                                        name="memory"
+                                        min="256"
+                                        value="2"
+                                        required
+                                        class="flex-1 px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                    />
+                                    <select
+                                        id="memory-unit"
+                                        name="memory-unit"
+                                        class="px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pf-blue focus:border-pf-blue"
+                                    >
+                                        <option value="Mi">Mi</option>
+                                        <option value="Gi" selected>Gi</option>
+                                    </select>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Memory allocation per broker pod.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="flex justify-start gap-3 pt-6 pb-8 border-t border-gray-200 mt-8">
+                        <button
+                            type="submit"
+                            class="px-4 py-1.5 bg-pf-blue text-white text-sm font-normal rounded hover:bg-pf-blue-hover focus:outline-none transition"
+                        >
+                            Save
+                        </button>
+                        <button
+                            type="button"
+                            class="px-4 py-1.5 bg-white text-gray-700 text-sm font-normal border border-gray-300 rounded hover:bg-gray-50 focus:outline-none transition"
+                        >
+                            Reload
+                        </button>
+                        <button
+                            type="button"
+                            class="px-4 py-1.5 text-pf-blue text-sm font-normal hover:underline focus:outline-none transition"
+                            onclick="window.history.back()"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+                </div>
+                <!-- End Form View -->
+
+                <!-- YAML View -->
+                <div id="yaml-view" style="display: none;">
+                    <div class="bg-white border border-gray-200 rounded">
+                        <!-- Editor Toolbar -->
+                        <div class="border-b border-gray-200 px-4 py-2 flex items-center gap-2 bg-gray-50">
+                            <button class="p-1 hover:bg-gray-200 rounded" title="Download">
+                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                            </button>
+                            <button class="p-1 hover:bg-gray-200 rounded" title="Copy">
+                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                </svg>
+                            </button>
+                            <button class="p-1 hover:bg-gray-200 rounded" title="Expand">
+                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+                                </svg>
+                            </button>
+                            <div class="ml-auto text-xs text-gray-500">
+                                <a href="#" class="text-pf-blue hover:underline">Shortcuts</a>
+                            </div>
+                        </div>
+                        <!-- YAML Editor -->
+                        <div class="relative">
+                            <textarea
+                                class="w-full font-mono text-sm p-4 bg-white border-0 focus:outline-none focus:ring-0 resize-none"
+                                rows="20"
+                                spellcheck="false"
+                            >apiVersion: arkmq.org/v1beta2
+kind: BrokerService
+metadata:
+  name: messaging-service
+  namespace: messaging-infra
+  labels:
+    tier: production
+    forWorkQueue: "true"
+  resourceVersion: "48231"
+  uid: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+  creationTimestamp: "2026-08-20T14:30:00Z"
+spec:
+  resources:
+    limits:
+      memory: "2Gi"</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="flex justify-start gap-3 pt-6 pb-8 border-t border-gray-200 mt-8">
+                        <button
+                            type="button"
+                            class="px-4 py-1.5 bg-pf-blue text-white text-sm font-normal rounded hover:bg-pf-blue-hover focus:outline-none transition"
+                        >
+                            Save
+                        </button>
+                        <button
+                            type="button"
+                            class="px-4 py-1.5 bg-white text-gray-700 text-sm font-normal border border-gray-300 rounded hover:bg-gray-50 focus:outline-none transition"
+                        >
+                            Reload
+                        </button>
+                        <button
+                            type="button"
+                            class="px-4 py-1.5 text-pf-blue text-sm font-normal hover:underline focus:outline-none transition"
+                            onclick="window.history.back()"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+                <!-- End YAML View -->
+            </div>
+        </main>
+    </div>
+</body>
+</html>

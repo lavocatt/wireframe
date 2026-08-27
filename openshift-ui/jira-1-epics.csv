@@ -1,0 +1,5 @@
+Issue Type,Summary,Description,Priority,Component/s,Labels
+Epic,Infrastructure & Setup,"Set up development infrastructure including certificate management, Prometheus monitoring, and plugin navigation integration. This epic covers all foundational work needed before UI development can begin.",High,self-provisioning-ui,phase-1
+Epic,BrokerService Management,"Provide UI for cluster administrators to create, list, and view BrokerService resources. BrokerServices represent messaging infrastructure (clusters, storage, PKI) managed by operators.",High,self-provisioning-ui,"phase-2,phase-3"
+Epic,BrokerApp Management,"Provide UI for cluster administrators to create, list, and view BrokerApp resources. BrokerApps represent application intent and bind to BrokerServices via label selectors.",High,self-provisioning-ui,"phase-2,phase-3"
+Epic,Metrics & Monitoring,"Display performance metrics for BrokerServices and BrokerApps using Prometheus queries and charts. Enables cluster administrators to monitor messaging infrastructure health.",Medium,self-provisioning-ui,phase-4
